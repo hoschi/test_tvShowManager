@@ -4,6 +4,7 @@
 
     "browser":true,
     "predef":[
+		angular:true,
     ],
 
 	"node":true,

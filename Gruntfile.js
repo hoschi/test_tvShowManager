@@ -32,16 +32,17 @@ module.exports = function(grunt) {
             compass: {
                 files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
                 tasks: ['compass']
-            },
-            livereload: {
-                files: [
-                        '<%= yeoman.app %>/{,*/}*.html',
-                        '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
-                        '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
-                        '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-                ],
-                tasks: ['livereload']
             }
+			//,
+            //livereload: {
+                //files: [
+                        //'<%= yeoman.app %>/{,*/}*.html',
+                        //'{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
+                        //'{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
+                        //'<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+                //],
+                //tasks: ['livereload']
+            //}
         },
         connect: {
             options: {

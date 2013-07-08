@@ -1,12 +1,12 @@
 module.exports = {
-	
+
 	// Name of the application (used as default <title>)
-	appName: "Sails Application",
+	appName: "TV Show Manager",
 
 	// Port this Sails application will live on
 	port: 1337,
 
-	// The environment the app is deployed in 
+	// The environment the app is deployed in
 	// (`development` or `production`)
 	//
 	// In `production` mode, all css and js are bundled up and minified
@@ -16,7 +16,7 @@ module.exports = {
 
 	// Logger
 	// Valid `level` configs:
-	// 
+	//
 	// - error
 	// - warn
 	// - debug
@@ -31,7 +31,7 @@ module.exports = {
 		customMiddleware: function(app) {
 			var express = require('express');
 			app.use(express['static'](process.cwd() + '/app'));
-			app.use(express.csrf());	
+			app.use(express.csrf());
 		}
 	}
 
