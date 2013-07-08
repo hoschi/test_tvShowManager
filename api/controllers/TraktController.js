@@ -7,7 +7,7 @@ var TraktController = {
 
 	// To trigger this action locally, visit: `http://localhost:port/trakt/collection`
 	collection: function (req,res) {
-		res.json([trakt.test]);
+		res.json([trakt.userName, trakt.password]);
 
 	}
 
