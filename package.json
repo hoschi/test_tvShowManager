@@ -4,7 +4,7 @@
   "dependencies": {
     "sails": "~0.8.94",
     "express": "~3.2.6",
-	"trakt": "~0.0.5"
+    "trakt": "~0.0.5"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -28,7 +28,8 @@
     "grunt-open": "~0.2.0",
     "matchdep": "~0.1.1",
     "grunt-google-cdn": "~0.1.1",
-    "grunt-ngmin": "~0.0.2"
+    "grunt-ngmin": "~0.0.2",
+    "grunt-shell": "~0.3.0"
   },
   "engines": {
     "node": ">=0.10.2"

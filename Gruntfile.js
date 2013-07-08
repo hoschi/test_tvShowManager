@@ -20,6 +20,16 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         yeoman: yeomanConfig,
+		shell: {
+			lift:{
+				command:'sails lift',
+				options: {
+					stdout:true,
+					stderr:true,
+					failOnError:true
+				}
+			}
+		},
         watch: {
             coffee: {
                 files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
@@ -32,7 +42,14 @@ module.exports = function(grunt) {
             compass: {
                 files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
                 tasks: ['compass']
-            }
+            },
+			sail: {
+				files: [
+					'api/{,*/}*.js',
+					'config/{,*/}*.js'
+				],
+				tasks: ['shell:lift']
+			}
 			//,
             //livereload: {
                 //files: [
@@ -286,11 +303,9 @@ module.exports = function(grunt) {
             'karma'
     ]);
 
-    grunt.registerTask('lift', [
-            'clean:server',
-            'coffee',
-            'compass'
-    ]);
+    grunt.registerTask('lift', function () {
+		grunt.task.run(['shell:lift']);
+	});
 
     grunt.registerTask('build', [
             'clean:dist',

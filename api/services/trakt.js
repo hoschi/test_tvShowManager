@@ -2,6 +2,6 @@ var trakt;
 
 trakt = {};
 
-trakt.test = "foo";
+trakt.test = "foo test";
 
 module.exports = trakt;
