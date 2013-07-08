@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "dependencies": {
     "sails": "~0.8.94",
-    "express": "~3.2.6"
+    "express": "~3.2.6",
+	"trakt": "~0.0.5"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
