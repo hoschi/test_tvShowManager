@@ -20,6 +20,27 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         yeoman: yeomanConfig,
+		nodemon: {
+			dev: {
+				options: {
+					file: 'app.js',
+					ignoredFiles: ['README.md', 'node_modules/**'],
+					watchedExtensions: ['js'],
+					watchedFolders: [
+						'api/',
+						'config/'
+					]
+				}
+			}
+		},
+		concurrent: {
+			watchAll: {
+				tasks: ['nodemon', 'watch'],
+				options: {
+					logConcurrentOutput: true
+				}
+			}
+		},
 		shell: {
 			lift:{
 				command:'sails lift',
@@ -42,14 +63,7 @@ module.exports = function(grunt) {
             compass: {
                 files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
                 tasks: ['compass']
-            },
-			sail: {
-				files: [
-					'api/{,*/}*.js',
-					'config/{,*/}*.js'
-				],
-				tasks: ['shell:lift']
-			}
+            }
 			//,
             //livereload: {
                 //files: [
@@ -286,13 +300,7 @@ module.exports = function(grunt) {
     grunt.renameTask('regarde', 'watch');
 
     grunt.registerTask('server', [
-            'clean:server',
-            'coffee:dist',
-            'compass:server',
-            'livereload-start',
-            'connect:livereload',
-            'open',
-            'watch'
+            'concurrent:watchAll'
     ]);
 
     grunt.registerTask('test', [
