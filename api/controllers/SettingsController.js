@@ -5,16 +5,14 @@
 var getFirst = function (req, res) {
 	Settings.find(1).done(function(err, settings){
 		if (err) {
-			console.error("error");
 			res.send(500);
 		}
 		if (!settings) {
-			console.error("error");
 			res.send(404, "Settings object should be there but isn't, this should be created during bootstrap!");
 
 		}
 
-		console.log(settings);
+		//console.log(settings);
 		res.json(settings.values);
 	});
 };

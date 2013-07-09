@@ -8,7 +8,8 @@ module.exports = {
 
 		// Simple attribute:
 		traktUsername: 'STRING',
-		traktPassword: 'STRING'
+		traktPassword: 'STRING',
+		traktApiKey: 'STRING'
 
 		// Or for more flexibility:
 		// phoneNumber: {
