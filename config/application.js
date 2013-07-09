@@ -31,7 +31,7 @@ module.exports = {
 		customMiddleware: function(app) {
 			var express = require('express');
 			app.use(express['static'](process.cwd() + '/app'));
-			app.use(express.csrf());
+			//app.use(express.csrf());
 		}
 	}
 
