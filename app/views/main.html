@@ -1,4 +1,9 @@
 <a href="#/admin">Admin Area</a>
+<div class="row errors">
+	<ul>
+		<li ng-repeat="error in errors">{{error}}</li>
+	</ul>
+</div>
 <div class="row show container" ng-repeat="show in shows">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
 	Seasons in collection: {{show.seasons.length}}
