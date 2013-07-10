@@ -2,17 +2,18 @@
 	:: Settings
 	-> controller
 ---------------------*/
-var getFirst = function (req, res) {
-	Settings.find(1).done(function(err, settings){
+var getFirst;
+
+getFirst = function (req, res) {
+	Settings.getFirst(function(err, settings){
 		if (err) {
-			res.send(500);
+			res.send(500, err);
 		}
+
 		if (!settings) {
 			res.send(404, "Settings object should be there but isn't, this should be created during bootstrap!");
-
 		}
 
-		//console.log(settings);
 		res.json(settings.values);
 	});
 };
@@ -36,6 +37,22 @@ var SettingsController = {
 				res.send(500);
 			}
 			res.json(settingsList);
+		});
+	},
+
+	create:function (req, res) {
+		res.send(500, "This is not allowed, you can't have more than one settings object");
+	},
+
+	destroy:function (req, res) {
+		res.send(500, "Why you wanna do that?!");
+	},
+
+	update:function (req, res) {
+		Settings.update(req.param('id'), req.body, function(err) {
+			console.log("updated trakt service settings");
+			trakt.settings = req.body;
+			res.send(req.body);
 		});
 	}
 

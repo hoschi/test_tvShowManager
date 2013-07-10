@@ -10,6 +10,7 @@
 		trakt.customGET('collection').then(function(shows){
 			$scope.shows = shows;
 		},function(err){
+			$scope.shows = undefined;
 			console.error(err);
 		});
 	});

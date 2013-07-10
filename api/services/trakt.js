@@ -27,7 +27,11 @@ trakt.getAllShows = function (callback) {
 		if (err) return callback(err);
 
 		json = JSON.parse(body);
-		callback(null, json);
+		if (json.error) {
+			return callback(json.error);
+		}
+
+		return callback(null, json);
 	});
 };
 

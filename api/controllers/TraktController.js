@@ -5,8 +5,7 @@
 var trakt = require('../services/trakt');
 
 // setup trakt module
-// TODO refactore this and getFirst of SettingsController into model?!
-Settings.find(1).done(function(err, settings){
+Settings.getFirst(function(err, settings){
 	if (err) {
 		console.error(err);
 	}
@@ -15,7 +14,7 @@ Settings.find(1).done(function(err, settings){
 
 	}
 
-	console.log("setup trakt service");
+	console.log("setup trakt service, done");
 	trakt.settings = settings.values;
 });
 
