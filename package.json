@@ -4,7 +4,7 @@
   "dependencies": {
     "sails": "~0.8.94",
     "express": "~3.2.6",
-    "trakt": "~0.0.5",
+    "request": "~2",
     "optimist": "~0.6.0"
   },
   "devDependencies": {

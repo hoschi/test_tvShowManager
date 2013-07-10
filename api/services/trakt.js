@@ -1,6 +1,6 @@
-var trakt, TraktClient;
+var trakt, request;
 
-TraktClient = require('trakt');
+request = require('request');
 
 trakt = {
 	settings:{
@@ -10,23 +10,25 @@ trakt = {
 	}
 };
 
-trakt.getOrCreateClient = function () {
-	if (!this.client) {
-		this.client = new TraktClient({
-			'username':this.settings.traktUsername,
-			'password':this.settings.traktPassword,
-			'api_key':this.settings.traktApiKey
-		});
-		console.log("trakt client created with settings", this.settings);
-	}
-	return this.client;
-};
-
 trakt.getAllShows = function (callback) {
-	var client;
+	var url;
 
-	client = this.getOrCreateClient();
-	return client.request('user', 'lastaciiitivity', {}, callback);
+	url = 'http://api.trakt.tv/user/library/shows/collection.json';
+	url += '/' + this.settings.traktApiKey;
+	url += '/' + this.settings.traktUsername;
+
+	request.get(url, {
+		'auth': {
+			'user': this.settings.traktUsername,
+			'pass': this.settings.traktPassword,
+		}
+	}, function (err, resp, body) {
+		var json;
+		if (err) return callback(err);
+
+		json = JSON.parse(body);
+		callback(null, json);
+	});
 };
 
 module.exports = trakt;
