@@ -7,11 +7,32 @@ trakt = {
 		traktUsername:"",
 		traktPassword:"",
 		traktApiKey:""
+	},
+	cache:{
 	}
 };
 
-trakt.getAllShows = function (callback) {
-	var url;
+trakt.getCached = function (key, force) {
+	var data;
+
+	data = this.cache[key];
+	if (force || !data) {
+		return null;
+	}
+
+	console.log("Return cached data for key: " + key);
+	return data;
+};
+
+trakt.getAllShows = function (callback, force) {
+	var url, cache;
+
+	data = this.getCached("getAllShows", force);
+	if (data) {
+		return callback(null, data);
+	}
+
+	cache = this.cache;
 
 	url = 'http://api.trakt.tv/user/library/shows/collection.json';
 	url += '/' + this.settings.traktApiKey;
@@ -30,6 +51,9 @@ trakt.getAllShows = function (callback) {
 		if (json.error) {
 			return callback(json.error);
 		}
+
+		// save data in cache
+		cache["getAllShows"] = json;
 
 		return callback(null, json);
 	});
