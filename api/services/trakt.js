@@ -26,7 +26,7 @@ trakt.getCached = function (key, force) {
 };
 
 trakt.createTransformer = function (callback, key) {
-	return _.partial(this.transformResponse, callback, key);
+	return _.partial(_.bind(this.transformResponse, this), callback, key);
 };
 
 trakt.transformResponse = function (callback, key, err, resp, body) {
@@ -84,20 +84,7 @@ trakt.getCollection = function (callback, force) {
 			'user': this.settings.traktUsername,
 			'pass': this.settings.traktPassword,
 		}
-	}, function (err, resp, body) {
-		var json;
-		if (err) return callback(err);
-
-		json = JSON.parse(body);
-		if (json.error) {
-			return callback(json.error);
-		}
-
-		// save data in cache
-		cache[key] = json;
-
-		return callback(null, json);
-	});
+	}, this.createTransformer(callback, key));
 };
 
 module.exports = trakt;
