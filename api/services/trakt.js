@@ -1,6 +1,7 @@
-var trakt, request;
+var trakt, request, _;
 
 request = require('request');
+_ = require('lodash');
 
 trakt = {
 	settings:{
@@ -24,10 +25,50 @@ trakt.getCached = function (key, force) {
 	return data;
 };
 
-trakt.getCollection = function (callback, force) {
-	var url, cache;
+trakt.createTransformer = function (callback, key) {
+	return _.partial(this.transformResponse, callback, key);
+};
 
-	data = this.getCached("getCollection", force);
+trakt.transformResponse = function (callback, key, err, resp, body) {
+	var json;
+	if (err) return callback(err);
+
+	json = JSON.parse(body);
+	if (json.error) {
+		return callback(json.error);
+	}
+
+	// save data in cache
+	this.cache[key] = json;
+
+	return callback(null, json);
+}
+
+trakt.getAllShows = function (callback, force) {
+	var url, cache, key;
+
+	data = this.getCached(key, force);
+	if (data) {
+		return callback(null, data);
+	}
+
+	url = 'http://api.trakt.tv/user/library/shows/all.json';
+	url += '/' + this.settings.traktApiKey;
+	url += '/' + this.settings.traktUsername;
+
+	request.get(url, {
+		'auth': {
+			'user': this.settings.traktUsername,
+			'pass': this.settings.traktPassword,
+		}
+	}, this.createTransformer(callback, key));
+};
+
+trakt.getCollection = function (callback, force) {
+	var url, cache, key;
+
+	key = "getCollection";
+	data = this.getCached(key, force);
 	if (data) {
 		return callback(null, data);
 	}
@@ -53,7 +94,7 @@ trakt.getCollection = function (callback, force) {
 		}
 
 		// save data in cache
-		cache["getCollection"] = json;
+		cache[key] = json;
 
 		return callback(null, json);
 	});
