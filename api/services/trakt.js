@@ -24,10 +24,10 @@ trakt.getCached = function (key, force) {
 	return data;
 };
 
-trakt.getAllShows = function (callback, force) {
+trakt.getCollection = function (callback, force) {
 	var url, cache;
 
-	data = this.getCached("getAllShows", force);
+	data = this.getCached("getCollection", force);
 	if (data) {
 		return callback(null, data);
 	}
@@ -53,7 +53,7 @@ trakt.getAllShows = function (callback, force) {
 		}
 
 		// save data in cache
-		cache["getAllShows"] = json;
+		cache["getCollection"] = json;
 
 		return callback(null, json);
 	});
