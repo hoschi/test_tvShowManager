@@ -4,6 +4,13 @@
 		<li ng-repeat="error in errors">{{error}}</li>
 	</ul>
 </div>
+<div class="progress">
+	<div class="bar bar-success" style="width: 5%;"></div>
+	<div class="bar bar-success" style="width: 5%;"></div>
+	<div class="bar bar-success" style="width: 5%;"></div>
+	<div class="bar bar-warning" style="width: 20%;"></div>
+	<div class="bar bar-danger" style="width: 10%;"></div>
+</div>
 <div class="row show container" ng-repeat="show in shows">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
 	Seasons in collection: {{show.seasons.length}}
