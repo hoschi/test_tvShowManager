@@ -61,7 +61,18 @@ trakt.getAllShows = function (callback, force) {
 			'user': this.settings.traktUsername,
 			'pass': this.settings.traktPassword,
 		}
-	}, this.createTransformer(callback, key));
+	//}, this.createTransformer(callback, key));
+	// this is only for development purposes
+	}, this.createTransformer(function (err, data) {
+		if (err) return callback(err);
+
+		newData = data.filter(function (show) {
+			return show.title === "7 Days" ||
+					show.title === "Alphas" ||
+					show.title === "The West Wing";
+		});
+		callback(null, newData);
+	}, key));
 };
 
 trakt.getCollection = function (callback, force) {
@@ -85,6 +96,15 @@ trakt.getCollection = function (callback, force) {
 			'pass': this.settings.traktPassword,
 		}
 	}, this.createTransformer(callback, key));
+};
+
+trakt.getAllShowsExtended = function (callback, force) {
+	return this.getAllShows(_.bind(function (err, shows) {
+		this.getCollection(_.bind(function (err, collection) {
+			// TODO this is not parallel, use async lib
+			callback(null, shows);
+		}, this), force);
+	}, this), force);
 };
 
 module.exports = trakt;
