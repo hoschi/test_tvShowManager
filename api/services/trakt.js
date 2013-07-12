@@ -87,8 +87,6 @@ trakt.getCollection = function (callback, force) {
 		return callback(null, data);
 	}
 
-	cache = this.cache;
-
 	url = 'http://api.trakt.tv/user/library/shows/collection.json';
 	url += '/' + this.settings.traktApiKey;
 	url += '/' + this.settings.traktUsername;
@@ -99,6 +97,22 @@ trakt.getCollection = function (callback, force) {
 			'pass': this.settings.traktPassword,
 		}
 	}, this.createTransformer(callback, key));
+};
+
+trakt.getSeasons = function (callback, force, showId) {
+	var url, cache, key;
+
+	key = "getSeasons-" + showId;
+	data = this.getCached(key, force);
+	if (data) {
+		return callback(null, data);
+	}
+
+	url = 'http://api.trakt.tv/show/seasons.json';
+	url += '/' + this.settings.traktApiKey;
+	url += '/' + showId;
+
+	request.get(url, {}, this.createTransformer(callback, key));
 };
 
 trakt.getAllShowsExtended = function (callback, force) {
@@ -112,8 +126,7 @@ trakt.getAllShowsExtended = function (callback, force) {
 			var collectionItem;
 
 			collectionItem = _.find(results[1], function(showInCollection) {
-				return show.title === showInCollection.title &&
-						show.year === showInCollection.year;
+				return show.tvdb_id === showInCollection.tvdb_id;
 			})
 
 			if (collectionItem) {
