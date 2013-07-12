@@ -105,7 +105,23 @@ trakt.getAllShowsExtended = function (callback, force) {
 	], function (err, results) {
 		if (err) return callback(err);
 
-		// TODO use late binding array thinger here?!
+		results[0].forEach(function(show) {
+			var collectionItem;
+
+			collectionItem = _.find(results[1], function(showInCollection) {
+				return show.title === showInCollection.title &&
+						show.year === showInCollection.year;
+			})
+
+			if (collectionItem) {
+				show.collected = true;
+				show.seasonsInCollection = collectionItem.seasons;
+			} else {
+				show.collected = false;
+			}
+
+		});
+
 		callback(null, results[0]);
 	});
 };
