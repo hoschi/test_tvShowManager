@@ -99,12 +99,15 @@ trakt.getCollection = function (callback, force) {
 };
 
 trakt.getAllShowsExtended = function (callback, force) {
-	return this.getAllShows(_.bind(function (err, shows) {
-		this.getCollection(_.bind(function (err, collection) {
-			// TODO this is not parallel, use async lib
-			callback(null, shows);
-		}, this), force);
-	}, this), force);
+	async.parallel([
+		_.bind(this.getAllShows, this),
+		_.bind(this.getCollection, this)
+	], function (err, results) {
+		if (err) return callback(err);
+
+		// TODO use late binding array thinger here?!
+		callback(null, results[0]);
+	});
 };
 
 module.exports = trakt;
