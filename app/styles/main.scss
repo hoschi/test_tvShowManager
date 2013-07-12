@@ -1,4 +1,5 @@
 @import "bootstrap-sass/lib/bootstrap";
+@import "bootstrap-sass/lib/responsive";
 
 /* Put your CSS here */
 html, body {
@@ -13,6 +14,7 @@ body {
 
 .hero-unit {
     margin: 30px auto 30px auto;
+	// 230px
     width: 550px;
     font-size: 18px;
     font-weight: 200;
@@ -35,4 +37,35 @@ body {
 
 .errors li {
 	color: red;
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {
+}
+
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 979px) {
+}
+
+/* Landscape phone to portrait tablet */
+@media (max-width: 767px) {
+	.hero-unit {
+		width: 430px;
+
+		h1 {
+			font-size: 50px;
+		}
+	}
+}
+
+/* Landscape phones and down */
+@media (max-width: 480px) {
+	html, body {
+	  margin: 10px;
+	}
+
+	.hero-unit {
+		margin: 10px auto 10px auto;
+		width: 230px;
+	}
 }
