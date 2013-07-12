@@ -47,6 +47,7 @@ trakt.transformResponse = function (callback, key, err, resp, body) {
 trakt.getAllShows = function (callback, force) {
 	var url, cache, key;
 
+	key = "getAllShows";
 	data = this.getCached(key, force);
 	if (data) {
 		return callback(null, data);
@@ -63,16 +64,18 @@ trakt.getAllShows = function (callback, force) {
 		}
 	//}, this.createTransformer(callback, key));
 	// this is only for development purposes
-	}, this.createTransformer(function (err, data) {
+	}, this.createTransformer(_.bind(function (err, data) {
 		if (err) return callback(err);
 
 		newData = data.filter(function (show) {
 			return show.title === "7 Days" ||
 					show.title === "Alphas" ||
+					show.title === "The A-Team" ||
 					show.title === "The West Wing";
 		});
+		this.cache[key] = newData;
 		callback(null, newData);
-	}, key));
+	}, this), key));
 };
 
 trakt.getCollection = function (callback, force) {
