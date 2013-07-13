@@ -172,7 +172,7 @@ trakt.getAllShowsExtended = function (callback, force) {
 		collection = results[1];
 		watched = results[2];
 		shows.forEach(function(show) {
-			var collectionItem, seasons;
+			var collectionItem, seasons, nextSeason, nextSeasonToCheckIndex;
 
 			this.getSeasons(_.bind(function (err, seasons) {
 				if (err) return callback(err);
@@ -207,6 +207,7 @@ trakt.getAllShowsExtended = function (callback, force) {
 
 						season.completelyCollected = true;
 						season.completelyWatched = true;
+						season.empty = true;
 						season.episodes.forEach(function (episode) {
 							if (episode === 'none') {
 								season.completelyCollected = false;
@@ -214,29 +215,46 @@ trakt.getAllShowsExtended = function (callback, force) {
 							if (episode !== 'watched') {
 								season.completelyWatched = false;
 							}
-							return episode !== 'none';
+
+							if (episode !== 'none') {
+								season.empty = false;
+							}
 						});
 
 						return season.completelyCollected;
 					})
+					// create clones, so filter operations don't modify normal season objects
 					.map(_.cloneDeep)
 					.value();
 
+				// save index before removing some shows
 				nextSeasonToCheckIndex = show.completelyCollectedSeasons.length;
-				if (show.seasons[nextSeasonToCheckIndex]) {
-					show.completelyCollectedSeasons.push(_.cloneDeep(show.seasons[nextSeasonToCheckIndex]));
-				}
 
+				// remove watched seasons and filter episodes
 				show.completelyCollectedSeasons =
 					_.filter(show.completelyCollectedSeasons, function (season) {
 						// keep only collected episodes
-						season.episodes = _.first(season.episodes, function (episode) {
+						season.episodes = _.filter(season.episodes, function (episode) {
 							return episode === 'collected';
 						});
 
 						// remove completely watched seasons
 						return !season.completelyWatched;
 					});
+
+				if (show.seasons[nextSeasonToCheckIndex] &&
+					show.seasons[nextSeasonToCheckIndex].empty === false) {
+					nextSeason = _.cloneDeep(show.seasons[nextSeasonToCheckIndex]);
+
+					// keep only first collected episodes
+					nextSeason.episodes = _.first(nextSeason.episodes, function (episode) {
+						return episode === 'collected';
+					});
+
+					show.completelyCollectedSeasons.push(nextSeason);
+				}
+
+
 
 				// finished?
 				processedShows++;
