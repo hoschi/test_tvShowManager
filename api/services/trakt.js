@@ -135,10 +135,17 @@ trakt.getAllShowsExtended = function (callback, force) {
 
 				// create seasons with empty episode lists
 				seasons.forEach(function(season) {
-					show.seasons[season.season - 1] = {
+					var newSeason, i;
+
+					newSeason = {
 						number:season.season,
-						episodes:new Array(season.episodes)
+						episodes:[]
 					};
+
+					for (i = 0; i < season.episodes; i++) {
+						newSeason.episodes[i] = "none";
+					}
+					show.seasons[season.season - 1] = newSeason;
 				});
 
 				collectionItem = _.find(collection, function(showInCollection) {
@@ -149,7 +156,7 @@ trakt.getAllShowsExtended = function (callback, force) {
 					show.collected = true;
 					collectionItem.seasons.forEach(function(collectedSeason) {
 						collectedSeason.episodes.forEach(function(episode) {
-							show.seasons[collectedSeason.season - 1][episode - 1] = 'collected';
+							show.seasons[collectedSeason.season - 1].episodes[episode - 1] = 'collected';
 						});
 					});
 
