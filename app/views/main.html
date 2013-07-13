@@ -6,7 +6,14 @@
 </div>
 <div class="row well well-small" ng-repeat="show in shows">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
-	Continuously collected episode count: {{ show.completelyCollectedEpisodeCount }} </br>
+	<span ng-show="show.completelyCollectedEpisodeCount">
+		Continuously collected episode count: {{ show.completelyCollectedEpisodeCount }} in
+		<ng-pluralize count="show.completelyCollectedSeasons.length"
+					  when="{'1': 'one season',
+							 'other': '{} seasons'}">
+		</ng-pluralize>
+	</span>
+	</br>
 	Seasons:
 	<div ng-repeat="season in show.seasons">
 		<a ng-href="{{linkToTraktSeasonPage(show.url, season.number)}}" target="_blank">#{{season.number}}</a>
