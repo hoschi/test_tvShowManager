@@ -4,13 +4,17 @@
 		<li ng-repeat="error in errors">{{error}}</li>
 	</ul>
 </div>
-<div class="row show container" ng-repeat="show in shows">
+<div class="row show" ng-repeat="show in shows">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
 	Seasons:
 	<div ng-repeat="season in show.seasons">
 		#{{season.number}}
 		<div class="progress">
-			<div ng-repeat="episode in season.episodes" class="bar bar-{{episode}}" style="width: {{100 / season.episodes.length}}%;">
+			<div
+				ng-repeat="episode in season.episodes"
+				class="bar bar-{{episode}}"
+				style="width: {{100 / season.episodes.length}}%;"
+				title="Episode {{$index + 1}} of season {{season.number}}: {{episode}}">
 		</div>
 	</div>
 </div>
