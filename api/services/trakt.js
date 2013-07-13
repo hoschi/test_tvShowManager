@@ -119,27 +119,53 @@ trakt.getAllShowsExtended = function (callback, force) {
 	async.parallel([
 		_.bind(this.getAllShows, this),
 		_.bind(this.getCollection, this)
-	], function (err, results) {
+	], _.bind(function (err, results) {
 		if (err) return callback(err);
 
-		results[0].forEach(function(show) {
-			var collectionItem;
+		processedShows = 0;
+		shows = results[0];
+		collection = results[1];
+		shows.forEach(function(show) {
+			var collectionItem, seasons;
 
-			collectionItem = _.find(results[1], function(showInCollection) {
-				return show.tvdb_id === showInCollection.tvdb_id;
-			})
+			this.getSeasons(_.bind(function (err, seasons) {
+				if (err) return callback(err);
 
-			if (collectionItem) {
-				show.collected = true;
-				show.seasonsInCollection = collectionItem.seasons;
-			} else {
-				show.collected = false;
-			}
+				show.seasons = [];
 
-		});
+				// create seasons with empty episode lists
+				seasons.forEach(function(season) {
+					show.seasons.splice(season.season - 1, 0, {
+						number:season.season,
+						episodes:new Array(season.episodes)
+					});
+				});
 
-		callback(null, results[0]);
-	});
+				collectionItem = _.find(collection, function(showInCollection) {
+					return show.tvdb_id === showInCollection.tvdb_id;
+				})
+
+				if (collectionItem) {
+					show.collected = true;
+					collectionItem.seasons.forEach(function(collectedSeason) {
+						collectedSeason.episodes.forEach(function(episode) {
+							show.seasons[collectedSeason.season - 1][episode - 1] = 'collected';
+						});
+					});
+
+				} else {
+					show.collected = false;
+				}
+
+				// finished?
+				processedShows++;
+				if (processedShows === shows.length) {
+					callback(null, shows);
+				}
+			}, this), force, show.tvdb_id);
+
+		}, this);
+	}, this));
 };
 
 module.exports = trakt;
