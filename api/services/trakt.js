@@ -99,6 +99,27 @@ trakt.getCollection = function (callback, force) {
 	}, this.createTransformer(callback, key));
 };
 
+trakt.getWatchedShows = function (callback, force) {
+	var url, cache, key;
+
+	key = "getWatchedShows";
+	data = this.getCached(key, force);
+	if (data) {
+		return callback(null, data);
+	}
+
+	url = 'http://api.trakt.tv/user/library/shows/watched.json';
+	url += '/' + this.settings.traktApiKey;
+	url += '/' + this.settings.traktUsername;
+
+	request.get(url, {
+		'auth': {
+			'user': this.settings.traktUsername,
+			'pass': this.settings.traktPassword,
+		}
+	}, this.createTransformer(callback, key));
+};
+
 trakt.getSeasons = function (callback, force, showId) {
 	var url, cache, key;
 
@@ -115,16 +136,41 @@ trakt.getSeasons = function (callback, force, showId) {
 	request.get(url, {}, this.createTransformer(callback, key));
 };
 
+trakt.markEpisodes = function (show, collection, state) {
+	var collectionItem;
+
+	collectionItem = _.find(collection, function(showInCollection) {
+		return show.tvdb_id === showInCollection.tvdb_id;
+	})
+
+	if (collectionItem) {
+		show[state] = true;
+		// mark collected episodes
+		collectionItem.seasons.forEach(function(collectedSeason) {
+			collectedSeason.episodes.forEach(function(episode) {
+				show.seasons[collectedSeason.season - 1].episodes[episode - 1] = state;
+			});
+		});
+
+	} else {
+		show[state] = false;
+	}
+};
+
 trakt.getAllShowsExtended = function (callback, force) {
 	async.parallel([
 		_.bind(this.getAllShows, this),
-		_.bind(this.getCollection, this)
+		_.bind(this.getCollection, this),
+		_.bind(this.getWatchedShows, this)
 	], _.bind(function (err, results) {
+		var processedShows, shows, collection, watched;
+
 		if (err) return callback(err);
 
 		processedShows = 0;
 		shows = results[0];
 		collection = results[1];
+		watched = results[2];
 		shows.forEach(function(show) {
 			var collectionItem, seasons;
 
@@ -148,21 +194,10 @@ trakt.getAllShowsExtended = function (callback, force) {
 					show.seasons[season.season - 1] = newSeason;
 				});
 
-				collectionItem = _.find(collection, function(showInCollection) {
-					return show.tvdb_id === showInCollection.tvdb_id;
-				})
+				// check if show is in collection
+				this.markEpisodes(show, collection, 'collected');
 
-				if (collectionItem) {
-					show.collected = true;
-					collectionItem.seasons.forEach(function(collectedSeason) {
-						collectedSeason.episodes.forEach(function(episode) {
-							show.seasons[collectedSeason.season - 1].episodes[episode - 1] = 'collected';
-						});
-					});
-
-				} else {
-					show.collected = false;
-				}
+				this.markEpisodes(show, watched, 'watched');
 
 				// finished?
 				processedShows++;
