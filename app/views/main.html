@@ -1,13 +1,19 @@
 <a href="#/admin">Admin Area</a>
-<button type="button" class="btn btn-primary" ng-model="singleModel" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
-        Single Toggle
-    </button>
 <div class="row errors">
 	<ul>
 		<li ng-repeat="error in errors">{{error}}</li>
 	</ul>
 </div>
-<div class="row well" ng-repeat="show in shows">
+<div class="row">
+    <div class="btn-group">
+        <button type="button" class="btn" ng-model="showFilter.completelyWatched" btn-checkbox>All Watched</button>
+        <button type="button" class="btn" ng-model="showFilter.watched" btn-checkbox>Some Watched</button>
+        <button type="button" class="btn" ng-model="showFilter.completelyCollected" btn-checkbox>All Collected</button>
+        <button type="button" class="btn" ng-model="showFilter.collected" btn-checkbox>Some Collected</button>
+        <button type="button" class="btn" ng-model="showFilter.empty" btn-checkbox>Empty</button>
+    </div>
+</div>
+<div class="row well" ng-repeat="show in shows | filter: {watched: !showFilter.watched}">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
 	<span ng-show="show.completelyCollectedEpisodeCount">
 		Continuously collected episode count: {{ show.completelyCollectedEpisodeCount }} in

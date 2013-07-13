@@ -259,6 +259,17 @@ trakt.getAllShowsExtended = function (callback, force) {
 					return sum += season.episodes.length;
 				}, 0);
 
+				// save completely watched and collected
+				show.completelyWatched = _.every(show.seasons, function (season) {
+					return season.completelyWatched;
+				});
+				show.completelyCollected = _.every(show.seasons, function (season) {
+					return season.completelyCollected;
+				});
+				show.empty = _.every(show.seasons, function (season) {
+					return season.empty;
+				});
+
 				// finished?
 				processedShows++;
 				if (processedShows === shows.length) {

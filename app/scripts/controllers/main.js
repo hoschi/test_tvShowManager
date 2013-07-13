@@ -8,8 +8,14 @@
 		// init
 		$scope.errors = [];
 
-		// TODO remove
-		$scope.singleModel = 1;
+		// TODO save this in session
+		$scope.showFilter = {
+			completelyWatched:true,
+			watched:true,
+			completelyCollected:true,
+			collected:true,
+			empty:true
+		};
 
 		$scope.linkToTraktSeasonPage = function (baseUrl, season) {
 			return baseUrl +
