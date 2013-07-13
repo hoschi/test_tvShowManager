@@ -135,10 +135,10 @@ trakt.getAllShowsExtended = function (callback, force) {
 
 				// create seasons with empty episode lists
 				seasons.forEach(function(season) {
-					show.seasons.splice(season.season - 1, 0, {
+					show.seasons[season.season - 1] = {
 						number:season.season,
 						episodes:new Array(season.episodes)
-					});
+					};
 				});
 
 				collectionItem = _.find(collection, function(showInCollection) {
