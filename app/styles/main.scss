@@ -51,6 +51,11 @@ body {
 	@include gradient-vertical(#62c462, #57a957);
 }
 
+.episode.bar {
+	cursor: hand;
+	cursor: pointer;
+}
+
 /* Large desktop */
 @media (min-width: 1200px) {
 }

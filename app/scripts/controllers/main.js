@@ -3,10 +3,21 @@
 (function() {
 	var app = angular.module('tvShowManagerApp');
 	app.controller('MainCtrl', function ($scope, Restangular) {
-		var trakt;
+		var trakt, slug;
 
 		// init
 		$scope.errors = [];
+
+		$scope.linkToTraktSeasonPage = function (baseUrl, season) {
+			return baseUrl +
+				"/season/" + season;
+		};
+
+		$scope.openEpisodeTraktPage = function (baseUrl, season, episode) {
+			open(baseUrl +
+				"/season/" + season +
+				"/episode/" + episode, "_blank");
+		};
 
 		// get shows
 		trakt = Restangular.all('trakt');
