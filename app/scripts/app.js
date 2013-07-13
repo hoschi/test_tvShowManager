@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('tvShowManagerApp', ['restangular'])
+angular.module('tvShowManagerApp', ['restangular', 'ui.bootstrap'])
   .config(function ($routeProvider, RestangularProvider) {
     $routeProvider
       .when('/', {

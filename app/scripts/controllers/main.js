@@ -8,6 +8,9 @@
 		// init
 		$scope.errors = [];
 
+		// TODO remove
+		$scope.singleModel = 1;
+
 		$scope.linkToTraktSeasonPage = function (baseUrl, season) {
 			return baseUrl +
 				"/season/" + season;
