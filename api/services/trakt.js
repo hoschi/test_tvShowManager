@@ -197,7 +197,32 @@ trakt.getAllShowsExtended = function (callback, force) {
 				// check if show is in collection
 				this.markEpisodes(show, collection, 'collected');
 
+				// check if show is already watched
 				this.markEpisodes(show, watched, 'watched');
+
+				// search for completely collected seasons
+				show.completelyCollectedSeasons = _(show.seasons)
+					.first(function (season) {
+						var complete;
+
+						complete = _.every(season.episodes, function (episode) {
+							return episode !== 'none';
+						});
+
+						season.completelyCollected = complete;
+						return complete;
+					})
+					.filter(function (season) {
+						var completeWatched;
+
+						complete = _.every(season.episodes, function (episode) {
+							return episode !== 'none';
+						});
+
+						season.completelyCollected = complete;
+						return complete;
+					})
+					.value();
 
 				// finished?
 				processedShows++;
