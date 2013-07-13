@@ -200,29 +200,43 @@ trakt.getAllShowsExtended = function (callback, force) {
 				// check if show is already watched
 				this.markEpisodes(show, watched, 'watched');
 
-				// search for completely collected seasons
+				// search for completely collected seasons, and add flags
 				show.completelyCollectedSeasons = _(show.seasons)
 					.first(function (season) {
 						var complete;
 
-						complete = _.every(season.episodes, function (episode) {
+						season.completelyCollected = true;
+						season.completelyWatched = true;
+						season.episodes.forEach(function (episode) {
+							if (episode === 'none') {
+								season.completelyCollected = false;
+							}
+							if (episode !== 'watched') {
+								season.completelyWatched = false;
+							}
 							return episode !== 'none';
 						});
 
-						season.completelyCollected = complete;
-						return complete;
+						return season.completelyCollected;
 					})
-					.filter(function (season) {
-						var completeWatched;
-
-						complete = _.every(season.episodes, function (episode) {
-							return episode !== 'none';
-						});
-
-						season.completelyCollected = complete;
-						return complete;
-					})
+					.map(_.cloneDeep)
 					.value();
+
+				nextSeasonToCheckIndex = show.completelyCollectedSeasons.length;
+				if (show.seasons[nextSeasonToCheckIndex]) {
+					show.completelyCollectedSeasons.push(_.cloneDeep(show.seasons[nextSeasonToCheckIndex]));
+				}
+
+				show.completelyCollectedSeasons =
+					_.filter(show.completelyCollectedSeasons, function (season) {
+						// keep only collected episodes
+						season.episodes = _.first(season.episodes, function (episode) {
+							return episode === 'collected';
+						});
+
+						// remove completely watched seasons
+						return !season.completelyWatched;
+					});
 
 				// finished?
 				processedShows++;
