@@ -6,9 +6,11 @@
 </div>
 <div class="row well well-small" ng-repeat="show in shows">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
+	Continuously collected episode count: {{ show.completelyCollectedEpisodeCount }} </br>
 	Seasons:
 	<div ng-repeat="season in show.seasons">
 		<a ng-href="{{linkToTraktSeasonPage(show.url, season.number)}}" target="_blank">#{{season.number}}</a>
+		Episodes: {{ season.episodes.length }}
 
 		<div class="progress">
 			<div

@@ -254,7 +254,10 @@ trakt.getAllShowsExtended = function (callback, force) {
 					show.completelyCollectedSeasons.push(nextSeason);
 				}
 
-
+				// save complete count of collected episodes
+				show.completelyCollectedEpisodeCount = _.foldl(show.completelyCollectedSeasons, function (sum, season) {
+					return sum += season.episodes.length;
+				}, 0);
 
 				// finished?
 				processedShows++;
