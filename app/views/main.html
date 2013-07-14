@@ -6,14 +6,14 @@
 </div>
 <div class="row">
     <div class="btn-group">
-        <button type="button" class="btn" ng-model="showFilter.completelyWatched" btn-checkbox>All Watched</button>
-        <button type="button" class="btn" ng-model="showFilter.watched" btn-checkbox>Some Watched</button>
-        <button type="button" class="btn" ng-model="showFilter.completelyCollected" btn-checkbox>All Collected</button>
-        <button type="button" class="btn" ng-model="showFilter.collected" btn-checkbox>Some Collected</button>
-        <button type="button" class="btn" ng-model="showFilter.empty" btn-checkbox>Empty</button>
+        <button type="button" class="btn" ng-model="showFilterState.completelyWatched" btn-checkbox>All Watched</button>
+        <button type="button" class="btn" ng-model="showFilterState.watched" btn-checkbox>Some Watched</button>
+        <button type="button" class="btn" ng-model="showFilterState.completelyCollected" btn-checkbox>All Collected</button>
+        <button type="button" class="btn" ng-model="showFilterState.collected" btn-checkbox>Some Collected</button>
+        <button type="button" class="btn" ng-model="showFilterState.empty" btn-checkbox>Empty</button>
     </div>
 </div>
-<div class="row well" ng-repeat="show in shows | filter: {watched: !showFilter.watched}">
+<div class="row well" ng-repeat="show in shows | filterShows:showFilterState">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
 	<span ng-show="show.completelyCollectedEpisodeCount">
 		Continuously collected episode count: {{ show.completelyCollectedEpisodeCount }} in

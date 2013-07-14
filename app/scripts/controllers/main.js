@@ -9,7 +9,7 @@
 		$scope.errors = [];
 
 		// TODO save this in session
-		$scope.showFilter = {
+		$scope.showFilterState = {
 			completelyWatched:true,
 			watched:true,
 			completelyCollected:true,
