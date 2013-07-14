@@ -41,6 +41,8 @@ trakt.transformResponse = function (callback, key, err, resp, body) {
 	// save data in cache
 	this.cache[key] = json;
 
+	console.log("fetched data for key " + key);
+
 	return callback(null, json);
 }
 
@@ -62,20 +64,23 @@ trakt.getAllShows = function (callback, force) {
 			'user': this.settings.traktUsername,
 			'pass': this.settings.traktPassword,
 		}
-	//}, this.createTransformer(callback, key));
+	}, this.createTransformer(callback, key));
+	//
 	// this is only for development purposes
-	}, this.createTransformer(_.bind(function (err, data) {
-		if (err) return callback(err);
-
-		newData = data.filter(function (show) {
-			return show.title === "7 Days" ||
-					show.title === "Alphas" ||
-					show.title === "The A-Team" ||
-					show.title === "The West Wing";
-		});
-		this.cache[key] = newData;
-		callback(null, newData);
-	}, this), key));
+/*
+ *    }, this.createTransformer(_.bind(function (err, data) {
+ *        if (err) return callback(err);
+ *
+ *        newData = data.filter(function (show) {
+ *            return show.title === "7 Days" ||
+ *                    show.title === "Alphas" ||
+ *                    show.title === "The A-Team" ||
+ *                    show.title === "The West Wing";
+ *        });
+ *        this.cache[key] = newData;
+ *        callback(null, newData);
+ *    }, this), key));
+ */
 };
 
 trakt.getCollection = function (callback, force) {
