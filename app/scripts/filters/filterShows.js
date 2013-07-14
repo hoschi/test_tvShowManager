@@ -23,13 +23,19 @@
 					(filterState.hideEmpty && show.empty === false ||
 					filterState.hideEmpty === false) &&
 
-					((filterState.completelyWatched && show.completelyWatched === filterState.completelyWatched) ||
-					(filterState.watched && show.watched === filterState.watched && show.completelyWatched === false) ||
-					(filterState.watched === false && filterState.completelyWatched === false)) &&
+					(
+						(filterState.completelyWatched && show.completelyWatched === filterState.completelyWatched) ||
+						(filterState.watched && show.watched === filterState.watched && show.completelyWatched === false) ||
+						(filterState.notWatched && show.completelyWatched === false && show.watched === false) ||
+						(filterState.watched === false && filterState.completelyWatched === false && filterState.notWatched === false)
+					) &&
 
-					((filterState.completelyCollected && show.completelyCollected === filterState.completelyCollected) ||
-					(filterState.collected && show.collected === filterState.collected && show.completelyCollected === false) ||
-					(filterState.collected === false && filterState.completelyCollected === false));
+					(
+						(filterState.completelyCollected && show.completelyCollected === filterState.completelyCollected) ||
+						(filterState.collected && show.collected === filterState.collected && show.completelyCollected === false) ||
+						(filterState.notCollected && show.completelyCollected === false && show.collected === false) ||
+						(filterState.collected === false && filterState.completelyCollected === false && filterState.notCollected === false)
+					);
 			});
 		};
 	});

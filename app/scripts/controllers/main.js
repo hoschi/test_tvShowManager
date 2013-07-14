@@ -8,13 +8,20 @@
 		// init
 		$scope.errors = [];
 		$scope.shows = [];
+		$scope.orderBy = "title";
+		$scope.orderByOptions = [
+			"title",
+			"test"
+		];
 
 		// TODO save this in session
 		$scope.showFilterState = {
 			completelyWatched:false,
-			watched:true,
+			watched:false,
+			notWatched:false,
 			completelyCollected:false,
 			collected:true,
+			notCollected:true,
 			hideEmpty:false
 		};
 

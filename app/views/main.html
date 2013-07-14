@@ -5,15 +5,27 @@
 	</ul>
 </div>
 <div class="row">
+	Filter:
+	<input type="text" ng-model="filterText"/>
+</div>
+<div class="row">
+	Watched:
     <div class="btn-group">
-        <button type="button" class="btn" ng-model="showFilterState.completelyWatched" btn-checkbox>All Watched</button>
-        <button type="button" class="btn" ng-model="showFilterState.watched" btn-checkbox>Some Watched</button>
-        <button type="button" class="btn" ng-model="showFilterState.completelyCollected" btn-checkbox>All Collected</button>
-        <button type="button" class="btn" ng-model="showFilterState.collected" btn-checkbox>Some Collected</button>
+        <button type="button" class="btn" ng-model="showFilterState.completelyWatched" btn-checkbox>Complete</button>
+        <button type="button" class="btn" ng-model="showFilterState.watched" btn-checkbox>Started</button>
+        <button type="button" class="btn" ng-model="showFilterState.notWatched" btn-checkbox>None</button>
+    </div>
+	Collected:
+    <div class="btn-group">
+        <button type="button" class="btn" ng-model="showFilterState.completelyCollected" btn-checkbox>Complete</button>
+        <button type="button" class="btn" ng-model="showFilterState.collected" btn-checkbox>Started</button>
+        <button type="button" class="btn" ng-model="showFilterState.notCollected" btn-checkbox>None</button>
+    </div>
+    <div class="btn-group">
         <button type="button" class="btn" ng-model="showFilterState.hideEmpty" btn-checkbox>Hide Empty</button>
     </div>
 </div>
-<div class="row well" ng-repeat="show in shows | filterShows:showFilterState">
+<div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:filterText">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
 	<span ng-show="show.completelyCollectedEpisodeCount">
 		Continuously collected episode count: {{ show.completelyCollectedEpisodeCount }} in
