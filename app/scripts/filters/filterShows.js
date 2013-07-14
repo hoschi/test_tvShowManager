@@ -19,11 +19,15 @@
 			    if (!show) {
 			        console.log(show);
 			    }
-				return show && (show.completelyWatched === filterState.completelyWatched ||
-					show.watched === filterState.watched ||
-					show.completelyCollected === filterState.completelyCollected ||
-					show.collected === filterState.collected ||
-					show.empty !== filterState.empty);
+				return show &&
+					(filterState.hideEmpty && show.empty === false ||
+					filterState.hideEmpty === false) &&
+
+					((filterState.completelyWatched && show.completelyWatched === filterState.completelyWatched) ||
+					(filterState.watched && show.watched === filterState.watched && show.completelyWatched === false)) &&
+
+					((filterState.completelyCollected && show.completelyCollected === filterState.completelyCollected) ||
+					(filterState.collected && show.collected === filterState.collected && show.completelyCollected === false));
 			});
 		};
 	});

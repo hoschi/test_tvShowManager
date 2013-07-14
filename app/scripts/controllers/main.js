@@ -7,14 +7,15 @@
 
 		// init
 		$scope.errors = [];
+		$scope.shows = [];
 
 		// TODO save this in session
 		$scope.showFilterState = {
-			completelyWatched:true,
+			completelyWatched:false,
 			watched:true,
-			completelyCollected:true,
+			completelyCollected:false,
 			collected:true,
-			empty:true
+			hideEmpty:false
 		};
 
 		$scope.linkToTraktSeasonPage = function (baseUrl, season) {

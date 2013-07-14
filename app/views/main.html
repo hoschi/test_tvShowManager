@@ -10,7 +10,7 @@
         <button type="button" class="btn" ng-model="showFilterState.watched" btn-checkbox>Some Watched</button>
         <button type="button" class="btn" ng-model="showFilterState.completelyCollected" btn-checkbox>All Collected</button>
         <button type="button" class="btn" ng-model="showFilterState.collected" btn-checkbox>Some Collected</button>
-        <button type="button" class="btn" ng-model="showFilterState.empty" btn-checkbox>Empty</button>
+        <button type="button" class="btn" ng-model="showFilterState.hideEmpty" btn-checkbox>Hide Empty</button>
     </div>
 </div>
 <div class="row well" ng-repeat="show in shows | filterShows:showFilterState">
