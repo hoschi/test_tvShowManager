@@ -8,20 +8,21 @@
 		// init
 		$scope.errors = [];
 		$scope.shows = [];
-		$scope.orderBy = "title";
+		$scope.orderShows = "completelyCollectedEpisodeCount";
+		$scope.orderReverse = true;
 		$scope.orderByOptions = [
 			"title",
-			"test"
+			"completelyCollectedEpisodeCount"
 		];
 
 		// TODO save this in session
 		$scope.showFilterState = {
 			completelyWatched:false,
-			watched:false,
-			notWatched:false,
-			completelyCollected:false,
+			watched:true,
+			notWatched:true,
+			completelyCollected:true,
 			collected:true,
-			notCollected:true,
+			notCollected:false,
 			hideEmpty:false
 		};
 

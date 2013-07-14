@@ -7,6 +7,9 @@
 <div class="row">
 	Filter:
 	<input type="text" ng-model="filterText"/>
+	Order by:
+	<select ng-model="orderShows" ng-options="o for o in orderByOptions"></select>
+	<button type="button" class="btn" ng-model="orderReverse" btn-checkbox>Reverse</button>
 </div>
 <div class="row">
 	Watched:
@@ -25,7 +28,7 @@
         <button type="button" class="btn" ng-model="showFilterState.hideEmpty" btn-checkbox>Hide Empty</button>
     </div>
 </div>
-<div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:filterText">
+<div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:filterText | orderBy:orderShows:orderReverse">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
 	<span ng-show="show.completelyCollectedEpisodeCount">
 		Continuously collected episode count: {{ show.completelyCollectedEpisodeCount }} in
