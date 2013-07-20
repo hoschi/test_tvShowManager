@@ -12,32 +12,27 @@
 			<button type="button" class="btn" ng-model="showFilterState.watched" btn-checkbox>Started</button>
 			<button type="button" class="btn" ng-model="showFilterState.notWatched" btn-checkbox>None</button>
 		</div>
-    </div>
-	<div class="span4">
 		Collected:
 		<div class="btn-group">
 			<button type="button" class="btn" ng-model="showFilterState.completelyCollected" btn-checkbox>Complete</button>
 			<button type="button" class="btn" ng-model="showFilterState.collected" btn-checkbox>Started</button>
 			<button type="button" class="btn" ng-model="showFilterState.notCollected" btn-checkbox>None</button>
 		</div>
-    </div>
-    <div class="span3">
-		<div class="btn-group">
-			<button type="button" class="btn" ng-model="showFilterState.hideEmpty" btn-checkbox>Hide Empty</button>
+		<button type="button" class="btn" ng-model="showFilterState.hideEmpty" btn-checkbox>Hide Empty</button>
+	</div>
+	<div class="span8">
+		<div>
+			Filter:
+			<input class="search-query span3" type="text" ng-model="filterText"/>
+		</div>
+		<div>
+			Order by:
+			<select ng-model="orderShows" ng-options="o for o in orderByOptions"></select>
+			<button type="button" class="btn" ng-model="orderReverse" btn-checkbox>Reverse</button>
 		</div>
 	</div>
 </div>
-<form class="row form-search">
-	<div class="span4">
-		Filter:
-		<input class="search-query span3" type="text" ng-model="filterText"/>
-	</div>
-	<div class="span8">
-		Order by:
-		<select ng-model="orderShows" ng-options="o for o in orderByOptions"></select>
-		<button type="button" class="btn" ng-model="orderReverse" btn-checkbox>Reverse</button>
-	</div>
-</form>
+
 <div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:filterText | orderBy:orderShows:orderReverse">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
 	<span ng-show="show.completelyCollectedEpisodeCount">
