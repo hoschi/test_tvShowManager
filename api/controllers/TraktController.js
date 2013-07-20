@@ -21,14 +21,14 @@ Settings.getFirst(function(err, settings){
 var TraktController = {
 
 	// To trigger this action locally, visit: `http://localhost:port/trakt/collection`
-	collection: function (req,res) {
+	collection: function (req, res) {
 		trakt.getAllShowsExtended(function (err, shows) {
 			if (err) {
 				return res.send(err, 500);
 			}
 			res.json(shows);
-		});
-	}
+		}, req.param('force'));
+	},
 
 };
 module.exports = TraktController;

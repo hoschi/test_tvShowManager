@@ -168,11 +168,13 @@ trakt.getAllShowsExtended = function (callback, force) {
 		_.bind(this.getCollection, this),
 		_.bind(this.getWatchedShows, this)
 	], _.bind(function (err, results) {
-		var processedShows, shows, collection, watched;
+		var state, shows, collection, watched;
 
 		if (err) return callback(err);
 
-		processedShows = 0;
+		state = {
+			processedShows:0
+		};
 		shows = results[0];
 		collection = results[1];
 		watched = results[2];
@@ -182,108 +184,113 @@ trakt.getAllShowsExtended = function (callback, force) {
 			this.getSeasons(_.bind(function (err, seasons) {
 				if (err) return callback(err);
 
-				show.seasons = [];
-
-				// create seasons with empty episode lists
-				seasons.forEach(function(season) {
-					var newSeason, i;
-
-					newSeason = {
-						number:season.season,
-						episodes:[]
-					};
-
-					for (i = 0; i < season.episodes; i++) {
-						newSeason.episodes[i] = "none";
-					}
-					show.seasons[season.season - 1] = newSeason;
-				});
-
-				// check if show is in collection
-				this.markEpisodes(show, collection, 'collected');
-
-				// check if show is already watched
-				this.markEpisodes(show, watched, 'watched');
-
-				// search for completely collected seasons, and add flags
-				show.completelyCollectedSeasons = _(show.seasons)
-					.first(function (season) {
-						var complete;
-
-						season.completelyCollected = true;
-						season.completelyWatched = true;
-						season.empty = true;
-						season.episodes.forEach(function (episode) {
-							if (episode === 'none') {
-								season.completelyCollected = false;
-							}
-							if (episode !== 'watched') {
-								season.completelyWatched = false;
-							}
-
-							if (episode !== 'none') {
-								season.empty = false;
-							}
-						});
-
-						return season.completelyCollected;
-					})
-					// create clones, so filter operations don't modify normal season objects
-					.map(_.cloneDeep)
-					.value();
-
-				// save index before removing some shows
-				nextSeasonToCheckIndex = show.completelyCollectedSeasons.length;
-
-				// remove watched seasons and filter episodes
-				show.completelyCollectedSeasons =
-					_.filter(show.completelyCollectedSeasons, function (season) {
-						// keep only collected episodes
-						season.episodes = _.filter(season.episodes, function (episode) {
-							return episode === 'collected';
-						});
-
-						// remove completely watched seasons
-						return !season.completelyWatched;
-					});
-
-				if (show.seasons[nextSeasonToCheckIndex] &&
-					show.seasons[nextSeasonToCheckIndex].empty === false) {
-					nextSeason = _.cloneDeep(show.seasons[nextSeasonToCheckIndex]);
-
-					// keep only first collected episodes
-					nextSeason.episodes = _.first(nextSeason.episodes, function (episode) {
-						return episode === 'collected';
-					});
-
-					show.completelyCollectedSeasons.push(nextSeason);
-				}
-
-				// save complete count of collected episodes
-				show.completelyCollectedEpisodeCount = _.foldl(show.completelyCollectedSeasons, function (sum, season) {
-					return sum += season.episodes.length;
-				}, 0);
-
-				// save completely watched and collected
-				show.completelyWatched = _.every(show.seasons, function (season) {
-					return season.completelyWatched;
-				});
-				show.completelyCollected = _.every(show.seasons, function (season) {
-					return season.completelyCollected;
-				});
-				show.empty = _.every(show.seasons, function (season) {
-					return season.empty;
-				});
-
-				// finished?
-				processedShows++;
-				if (processedShows === shows.length) {
-					callback(null, shows);
-				}
+				this.buildCollection(state, show, shows, collection, watched, seasons, callback);
 			}, this), force, show.tvdb_id);
 
 		}, this);
 	}, this));
+};
+
+trakt.buildCollection = function (state, show, shows, collection, watched, seasons, callback) {
+
+	show.seasons = [];
+
+	// create seasons with empty episode lists
+	seasons.forEach(function(season) {
+		var newSeason, i;
+
+		newSeason = {
+			number:season.season,
+			episodes:[]
+		};
+
+		for (i = 0; i < season.episodes; i++) {
+			newSeason.episodes[i] = "none";
+		}
+		show.seasons[season.season - 1] = newSeason;
+	});
+
+	// check if show is in collection
+	this.markEpisodes(show, collection, 'collected');
+
+	// check if show is already watched
+	this.markEpisodes(show, watched, 'watched');
+
+	// search for completely collected seasons, and add flags
+	show.completelyCollectedSeasons = _(show.seasons)
+		.first(function (season) {
+			var complete;
+
+			season.completelyCollected = true;
+			season.completelyWatched = true;
+			season.empty = true;
+			season.episodes.forEach(function (episode) {
+				if (episode === 'none') {
+					season.completelyCollected = false;
+				}
+				if (episode !== 'watched') {
+					season.completelyWatched = false;
+				}
+
+				if (episode !== 'none') {
+					season.empty = false;
+				}
+			});
+
+			return season.completelyCollected;
+		})
+		// create clones, so filter operations don't modify normal season objects
+		.map(_.cloneDeep)
+		.value();
+
+	// save index before removing some shows
+	nextSeasonToCheckIndex = show.completelyCollectedSeasons.length;
+
+	// remove watched seasons and filter episodes
+	show.completelyCollectedSeasons =
+		_.filter(show.completelyCollectedSeasons, function (season) {
+			// keep only collected episodes
+			season.episodes = _.filter(season.episodes, function (episode) {
+				return episode === 'collected';
+			});
+
+			// remove completely watched seasons
+			return !season.completelyWatched;
+		});
+
+	if (show.seasons[nextSeasonToCheckIndex] &&
+		show.seasons[nextSeasonToCheckIndex].empty === false) {
+		nextSeason = _.cloneDeep(show.seasons[nextSeasonToCheckIndex]);
+
+		// keep only first collected episodes
+		nextSeason.episodes = _.first(nextSeason.episodes, function (episode) {
+			return episode === 'collected';
+		});
+
+		show.completelyCollectedSeasons.push(nextSeason);
+	}
+
+	// save complete count of collected episodes
+	show.completelyCollectedEpisodeCount = _.foldl(show.completelyCollectedSeasons, function (sum, season) {
+		return sum += season.episodes.length;
+	}, 0);
+
+	// save completely watched and collected
+	show.completelyWatched = _.every(show.seasons, function (season) {
+		return season.completelyWatched;
+	});
+	show.completelyCollected = _.every(show.seasons, function (season) {
+		return season.completelyCollected;
+	});
+	show.empty = _.every(show.seasons, function (season) {
+		return season.empty;
+	});
+
+	// finished?
+	state.processedShows++;
+	if (state.processedShows === shows.length) {
+		callback(null, shows);
+	}
 };
 
 module.exports = trakt;
