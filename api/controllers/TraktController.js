@@ -10,8 +10,8 @@ Settings.getFirst(function(err, settings){
 		console.error(err);
 	}
 	if (!settings) {
-		console.error("No settings found");
-
+		console.error("No settings found, look into bootstrap.js!!!!");
+		return;
 	}
 
 	console.log("setup trakt service, done");

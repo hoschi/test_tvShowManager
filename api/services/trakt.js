@@ -178,22 +178,63 @@ trakt.getAllShowsExtended = function (callback, force) {
 		shows = results[0];
 		collection = results[1];
 		watched = results[2];
-		shows.forEach(function(show) {
-			this.getSeasons(_.bind(function (err, seasons) {
+		shows.forEach(function(traktShow) {
+			var fetchSeasonsAndBuildCollection;
+
+			fetchSeasonsAndBuildCollection = function (show) {
+				this.getSeasons(_.bind(function (err, seasons) {
+					if (err) return callback(err);
+
+					console.log("got seasons, save data", traktShow.tvdb_id);
+					show.save(function(err) {
+						console.log("data saved, build collection for", traktShow.tvdb_id);
+						this.buildCollection(state, traktShow, shows, collection, watched, seasons, callback);
+					});
+				}, this), force, show.tvdb_id);
+			};
+
+			console.log("search show in db for tvdb id", traktShow.tvdb_id);
+			Show.findOne({tvdbId:traktShow.tvdb_id}, function(err, show) {
 				if (err) return callback(err);
 
-				this.buildCollection(state, show, shows, collection, watched, seasons, callback);
-			}, this), force, show.tvdb_id);
+				if (!show) {
+					console.log("not found, create one for", traktShow.tvdb_id);
+					Show.create({
+						collapsed:false,
+						hidden:false,
+						tvdbId:traktShow.tvdb_id
+					}, function(err, show) {
+						if (err) return callback(err);
+
+						console.log("created, fetch seasons for", traktShow.tvdb_id);
+						fetchSeasonsAndBuildCollection(show);
+						return;
+					});
+					return;
+				}
+
+				console.log("local show found for", traktShow.tvdb_id);
+				if (!show.traktSeasons) {
+					// fetch if show don't alredy contains season information or forced update
+					console.log("but seasons not found for", traktShow.tvdb_id);
+					fetchSeasonsAndBuildCollection(show);
+					return;
+				}
+
+				console.log("local show has already season data for", traktShow.tvdb_id);
+				this.buildCollection(state, show, traktShow, shows, collection, watched, show.traktSeasons, callback);
+			});
+
 
 		}, this);
 	}, this));
 };
 
-trakt.buildCollection = function (state, show, shows, collection, watched, seasons, callback) {
+trakt.buildCollection = function (state, traktShow, shows, collection, watched, seasons, callback) {
 	var collectionItem, seasons, nextSeason, nextSeasonToCheckIndex;
 
 
-	show.seasons = [];
+	traktShow.seasons = [];
 
 	// create seasons with empty episode lists
 	seasons.forEach(function(season) {
@@ -207,17 +248,17 @@ trakt.buildCollection = function (state, show, shows, collection, watched, seaso
 		for (i = 0; i < season.episodes; i++) {
 			newSeason.episodes[i] = "none";
 		}
-		show.seasons[season.season - 1] = newSeason;
+		traktShow.seasons[season.season - 1] = newSeason;
 	});
 
 	// check if show is in collection
-	this.markEpisodes(show, collection, 'collected');
+	this.markEpisodes(traktShow, collection, 'collected');
 
 	// check if show is already watched
-	this.markEpisodes(show, watched, 'watched');
+	this.markEpisodes(traktShow, watched, 'watched');
 
 	// search for completely collected seasons, and add flags
-	show.completelyCollectedSeasons = _(show.seasons)
+	traktShow.completelyCollectedSeasons = _(traktShow.seasons)
 		.first(function (season) {
 			var complete;
 
@@ -244,11 +285,11 @@ trakt.buildCollection = function (state, show, shows, collection, watched, seaso
 		.value();
 
 	// save index before removing some shows
-	nextSeasonToCheckIndex = show.completelyCollectedSeasons.length;
+	nextSeasonToCheckIndex = traktShow.completelyCollectedSeasons.length;
 
 	// remove watched seasons and filter episodes
-	show.completelyCollectedSeasons =
-		_.filter(show.completelyCollectedSeasons, function (season) {
+	traktShow.completelyCollectedSeasons =
+		_.filter(traktShow.completelyCollectedSeasons, function (season) {
 			// keep only collected episodes
 			season.episodes = _.filter(season.episodes, function (episode) {
 				return episode === 'collected';
@@ -258,31 +299,31 @@ trakt.buildCollection = function (state, show, shows, collection, watched, seaso
 			return !season.completelyWatched;
 		});
 
-	if (show.seasons[nextSeasonToCheckIndex] &&
-		show.seasons[nextSeasonToCheckIndex].empty === false) {
-		nextSeason = _.cloneDeep(show.seasons[nextSeasonToCheckIndex]);
+	if (traktShow.seasons[nextSeasonToCheckIndex] &&
+		traktShow.seasons[nextSeasonToCheckIndex].empty === false) {
+		nextSeason = _.cloneDeep(traktShow.seasons[nextSeasonToCheckIndex]);
 
 		// keep only first collected episodes
 		nextSeason.episodes = _.first(nextSeason.episodes, function (episode) {
 			return episode === 'collected';
 		});
 
-		show.completelyCollectedSeasons.push(nextSeason);
+		traktShow.completelyCollectedSeasons.push(nextSeason);
 	}
 
 	// save complete count of collected episodes
-	show.completelyCollectedEpisodeCount = _.foldl(show.completelyCollectedSeasons, function (sum, season) {
+	traktShow.completelyCollectedEpisodeCount = _.foldl(traktShow.completelyCollectedSeasons, function (sum, season) {
 		return sum += season.episodes.length;
 	}, 0);
 
 	// save completely watched and collected
-	show.completelyWatched = _.every(show.seasons, function (season) {
+	traktShow.completelyWatched = _.every(traktShow.seasons, function (season) {
 		return season.completelyWatched;
 	});
-	show.completelyCollected = _.every(show.seasons, function (season) {
+	traktShow.completelyCollected = _.every(traktShow.seasons, function (season) {
 		return season.completelyCollected;
 	});
-	show.empty = _.every(show.seasons, function (season) {
+	traktShow.empty = _.every(traktShow.seasons, function (season) {
 		return season.empty;
 	});
 

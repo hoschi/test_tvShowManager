@@ -12,6 +12,7 @@ module.exports = {
         collapsed:'BOOLEAN',
         hidden:'BOOLEAN',
         tvdbId:'STRING',
+        traktSeasons:'JSON',
         traktData:'JSON'
 
 		// Simple attribute:
