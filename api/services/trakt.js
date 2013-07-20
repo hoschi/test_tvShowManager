@@ -179,8 +179,6 @@ trakt.getAllShowsExtended = function (callback, force) {
 		collection = results[1];
 		watched = results[2];
 		shows.forEach(function(show) {
-			var collectionItem, seasons, nextSeason, nextSeasonToCheckIndex;
-
 			this.getSeasons(_.bind(function (err, seasons) {
 				if (err) return callback(err);
 
@@ -192,6 +190,8 @@ trakt.getAllShowsExtended = function (callback, force) {
 };
 
 trakt.buildCollection = function (state, show, shows, collection, watched, seasons, callback) {
+	var collectionItem, seasons, nextSeason, nextSeasonToCheckIndex;
+
 
 	show.seasons = [];
 
