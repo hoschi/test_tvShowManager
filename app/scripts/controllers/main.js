@@ -11,8 +11,14 @@
 		$scope.orderShows = "completelyCollectedEpisodeCount";
 		$scope.orderReverse = true;
 		$scope.orderByOptions = [
-			"title",
-			"completelyCollectedEpisodeCount"
+			{
+				label:"Title",
+				value:"title"
+			},
+			{
+				label:"Collected Episode Count",
+				value:"completelyCollectedEpisodeCount"
+			}
 		];
 
 		// TODO save this in session
