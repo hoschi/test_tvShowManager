@@ -181,7 +181,7 @@ trakt.getAllShowsExtended = function (callback, force) {
 		shows.forEach(function(traktShow) {
 			var fetchSeasonsAndBuildCollection;
 
-			fetchSeasonsAndBuildCollection = function (show) {
+			fetchSeasonsAndBuildCollection = _.bind(function (show) {
 				this.getSeasons(_.bind(function (err, seasons) {
 					if (err) return callback(err);
 
@@ -191,10 +191,10 @@ trakt.getAllShowsExtended = function (callback, force) {
 						this.buildCollection(state, traktShow, shows, collection, watched, seasons, callback);
 					});
 				}, this), force, show.tvdb_id);
-			};
+			}, this);
 
 			console.log("search show in db for tvdb id", traktShow.tvdb_id);
-			Show.findOne({tvdbId:traktShow.tvdb_id}, function(err, show) {
+			Show.findByTvdbId(traktShow.tvdb_id, function(err, show) {
 				if (err) return callback(err);
 
 				if (!show) {

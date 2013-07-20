@@ -2,7 +2,7 @@
   "name": "tvshowmanager",
   "version": "0.0.0",
   "dependencies": {
-    "sails": "~0.8.895",
+    "sails": "0.8.94",
     "express": "~3.2.6",
     "request": "~2",
     "optimist": "~0.6.0",
