@@ -24,6 +24,7 @@ var TraktController = {
 	collection: function (req, res) {
 		trakt.getAllShowsExtended(function (err, shows) {
 			if (err) {
+				throw new Error(err);
 				return res.send(err, 500);
 			}
 			res.json(shows);

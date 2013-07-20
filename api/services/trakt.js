@@ -181,16 +181,18 @@ trakt.getAllShowsExtended = function (callback, force) {
 		shows.forEach(function(traktShow) {
 			var fetchSeasonsAndBuildCollection;
 
-			fetchSeasonsAndBuildCollection = _.bind(function (show) {
+			fetchSeasonsAndBuildCollection = _.bind(function (show, traktShow) {
 				this.getSeasons(_.bind(function (err, seasons) {
 					if (err) return callback(err);
 
 					console.log("got seasons, save data", traktShow.tvdb_id);
 					show.save(function(err) {
+						if (err) return callback(err);
+
 						console.log("data saved, build collection for", traktShow.tvdb_id);
 						this.buildCollection(state, traktShow, shows, collection, watched, seasons, callback);
 					});
-				}, this), force, show.tvdb_id);
+				}, this), force, traktShow.tvdb_id);
 			}, this);
 
 			console.log("search show in db for tvdb id", traktShow.tvdb_id);
@@ -207,17 +209,17 @@ trakt.getAllShowsExtended = function (callback, force) {
 						if (err) return callback(err);
 
 						console.log("created, fetch seasons for", traktShow.tvdb_id);
-						fetchSeasonsAndBuildCollection(show);
+						fetchSeasonsAndBuildCollection(show, traktShow);
 						return;
 					});
 					return;
 				}
 
-				console.log("local show found for", traktShow.tvdb_id);
+				console.log("local show found for", traktShow.tvdb_id, show);
 				if (!show.traktSeasons) {
 					// fetch if show don't alredy contains season information or forced update
 					console.log("but seasons not found for", traktShow.tvdb_id);
-					fetchSeasonsAndBuildCollection(show);
+					fetchSeasonsAndBuildCollection(show, traktShow);
 					return;
 				}
 
