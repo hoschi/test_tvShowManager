@@ -163,6 +163,8 @@ trakt.markEpisodes = function (show, collection, state) {
 };
 
 trakt.getAllShowsExtended = function (callback, force) {
+	console.log("loading extended tv show data, forced?", force);
+
 	async.parallel([
 		_.bind(this.getAllShows, this),
 		_.bind(this.getCollection, this),
