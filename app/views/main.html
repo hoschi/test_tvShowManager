@@ -32,6 +32,11 @@
 		</div>
 	</div>
 </div>
+<div class="row">
+	<div class="span12">
+		<button type="button" class="btn" >Reload Data</button>
+	</div>
+</div>
 
 <div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:filterText | orderBy:orderShows:orderReverse">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
