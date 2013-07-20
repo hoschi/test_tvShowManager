@@ -36,7 +36,11 @@
 <div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:filterText | orderBy:orderShows:orderReverse">
 	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
 	<span ng-show="show.completelyCollectedEpisodeCount">
-		Continuously collected episode count: {{ show.completelyCollectedEpisodeCount }} in
+		Continuously collected episode count:
+		<span class="badge badge-success">
+			{{ show.completelyCollectedEpisodeCount }}
+		</span>
+		in
 		<ng-pluralize count="show.completelyCollectedSeasons.length"
 					  when="{'1': 'one season',
 							 'other': '{} seasons'}">
