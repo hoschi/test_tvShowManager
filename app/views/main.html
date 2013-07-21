@@ -42,6 +42,11 @@
 		<button type="button" class="btn" ng-click="reloadSeasonsData()">Reload Seasons Data</button>
 	</div>
 </div>
+<div class="row shows-info">
+	<div class="offset5 span12">
+		You have <span class="badge">{{shows.length}}</span> shows :)
+	</div>
+</div>
 
 <div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:{hidden:false} | filter:filterText | orderBy:orderShows:orderReverse">
 	<h4><a target="_blank" href="{{ show.traktData.url }}">{{show.traktData.title}}</a></h4>
