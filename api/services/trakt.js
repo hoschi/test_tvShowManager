@@ -221,6 +221,16 @@ trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 				}
 
 				console.log("local show found for", traktShow.title);
+
+				if (show.hidden) {
+					console.log("show is hidden, return", traktShow.title);
+					state.processedShows++;
+					if (state.processedShows === traktShows.length) {
+						callback(null, shows);
+					}
+					return;
+				}
+
 				if (!show.traktSeasons || forceSeasons) {
 					// fetch if show don't alredy contains season information or forced update
 					console.log("but seasons not found for", traktShow.title);
