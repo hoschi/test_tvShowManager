@@ -32,7 +32,7 @@
 
 					(
 						(filterState.completelyCollected && show.traktData.completelyCollected === filterState.completelyCollected) ||
-						(filterState.collected && show.traktData.collected === filterState.collected && show.traktData.completelyCollected === false) ||
+						(filterState.collected && show.traktData.collected === filterState.collected && show.traktData.completelyCollectedEpisodeCount > 0 && show.traktData.completelyCollected === false) ||
 						(filterState.notCollected && show.traktData.completelyCollected === false && show.traktData.collected === false) ||
 						(filterState.collected === false && filterState.completelyCollected === false && filterState.notCollected === false)
 					);
