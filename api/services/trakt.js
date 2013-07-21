@@ -170,17 +170,18 @@ trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 		_.bind(this.getCollection, this, force),
 		_.bind(this.getWatchedShows, this, force)
 	], _.bind(function (err, results) {
-		var state, shows, collection, watched;
+		var state, shows, traktShows, collection, watched;
 
 		if (err) return callback(err);
 
 		state = {
 			processedShows:0
 		};
-		shows = results[0];
+		shows = [];
+		traktShows = results[0];
 		collection = results[1];
 		watched = results[2];
-		shows.forEach(function(traktShow) {
+		traktShows.forEach(function(traktShow) {
 			var fetchSeasonsAndBuildCollection;
 
 			fetchSeasonsAndBuildCollection = _.bind(function (show, traktShow) {
@@ -194,7 +195,7 @@ trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 						if (err) return callback(err);
 
 						console.log("data saved, build collection for", traktShow.title);
-						this.buildCollection(state, show, traktShow, shows, collection, watched, callback);
+						this.buildCollection(state, show, traktShow, shows, traktShows, collection, watched, callback);
 					}, this));
 				}, this), force, traktShow.tvdb_id);
 			}, this);
@@ -228,7 +229,7 @@ trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 				}
 
 				console.log("local show has already season data for", traktShow.title);
-				this.buildCollection(state, show, traktShow, shows, collection, watched, callback);
+				this.buildCollection(state, show, traktShow, shows, traktShows, collection, watched, callback);
 			}, this));
 
 
@@ -236,7 +237,7 @@ trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 	}, this));
 };
 
-trakt.buildCollection = function (state, show, traktShow, shows, collection, watched, callback) {
+trakt.buildCollection = function (state, show, traktShow, shows, traktShows, collection, watched, callback) {
 	var collectionItem, seasons, nextSeason, nextSeasonToCheckIndex;
 
 	seasons = show.traktSeasons;
@@ -334,9 +335,12 @@ trakt.buildCollection = function (state, show, traktShow, shows, collection, wat
 		return season.empty;
 	});
 
+	show.traktData = traktShow;
+	shows.push(show);
+
 	// finished?
 	state.processedShows++;
-	if (state.processedShows === shows.length) {
+	if (state.processedShows === traktShows.length) {
 		callback(null, shows);
 	}
 };
