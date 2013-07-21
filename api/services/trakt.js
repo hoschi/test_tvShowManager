@@ -46,7 +46,7 @@ trakt.transformResponse = function (callback, key, err, resp, body) {
 	return callback(null, json);
 }
 
-trakt.getAllShows = function (callback, force) {
+trakt.getAllShows = function (force, callback) {
 	var url, cache, key;
 
 	key = "getAllShows";
@@ -83,7 +83,7 @@ trakt.getAllShows = function (callback, force) {
  */
 };
 
-trakt.getCollection = function (callback, force) {
+trakt.getCollection = function (force, callback) {
 	var url, cache, key;
 
 	key = "getCollection";
@@ -104,7 +104,7 @@ trakt.getCollection = function (callback, force) {
 	}, this.createTransformer(callback, key));
 };
 
-trakt.getWatchedShows = function (callback, force) {
+trakt.getWatchedShows = function (force, callback) {
 	var url, cache, key;
 
 	key = "getWatchedShows";
@@ -162,13 +162,13 @@ trakt.markEpisodes = function (show, collection, state) {
 	}
 };
 
-trakt.getAllShowsExtended = function (callback, force) {
+trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 	console.log("loading extended tv show data, forced?", force);
 
 	async.parallel([
-		_.bind(this.getAllShows, this),
-		_.bind(this.getCollection, this),
-		_.bind(this.getWatchedShows, this)
+		_.bind(this.getAllShows, this, force),
+		_.bind(this.getCollection, this, force),
+		_.bind(this.getWatchedShows, this, force)
 	], _.bind(function (err, results) {
 		var state, shows, collection, watched;
 

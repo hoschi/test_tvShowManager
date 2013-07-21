@@ -5,15 +5,10 @@
 module.exports = {
 
 	attributes:{
-        /*
-		 *title:'STRING',
-         *tvdb_id:'STRING',
-         */
         collapsed:'BOOLEAN',
         hidden:'BOOLEAN',
         tvdbId:'STRING',
-        traktSeasons:'JSON',
-        traktData:'JSON'
+        traktSeasons:'JSON'
 
 		// Simple attribute:
         //name: 'STRING',
