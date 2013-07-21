@@ -19,21 +19,21 @@
 			    if (!show) {
 			        console.log(show);
 			    }
-				return show &&
-					(filterState.hideEmpty && show.empty === false ||
+				return show && show.traktData &&
+					(filterState.hideEmpty && show.traktData.empty === false ||
 					filterState.hideEmpty === false) &&
 
 					(
-						(filterState.completelyWatched && show.completelyWatched === filterState.completelyWatched) ||
-						(filterState.watched && show.watched === filterState.watched && show.completelyWatched === false) ||
-						(filterState.notWatched && show.completelyWatched === false && show.watched === false) ||
+						(filterState.completelyWatched && show.traktData.completelyWatched === filterState.completelyWatched) ||
+						(filterState.watched && show.traktData.watched === filterState.watched && show.traktData.completelyWatched === false) ||
+						(filterState.notWatched && show.traktData.completelyWatched === false && show.traktData.watched === false) ||
 						(filterState.watched === false && filterState.completelyWatched === false && filterState.notWatched === false)
 					) &&
 
 					(
-						(filterState.completelyCollected && show.completelyCollected === filterState.completelyCollected) ||
-						(filterState.collected && show.collected === filterState.collected && show.completelyCollected === false) ||
-						(filterState.notCollected && show.completelyCollected === false && show.collected === false) ||
+						(filterState.completelyCollected && show.traktData.completelyCollected === filterState.completelyCollected) ||
+						(filterState.collected && show.traktData.collected === filterState.collected && show.traktData.completelyCollected === false) ||
+						(filterState.notCollected && show.traktData.completelyCollected === false && show.traktData.collected === false) ||
 						(filterState.collected === false && filterState.completelyCollected === false && filterState.notCollected === false)
 					);
 			});

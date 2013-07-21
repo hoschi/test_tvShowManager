@@ -11,16 +11,16 @@
 		// init
 		$scope.errors = [];
 		$scope.shows = [];
-		$scope.orderShows = "completelyCollectedEpisodeCount";
+		$scope.orderShows = "traktData.completelyCollectedEpisodeCount";
 		$scope.orderReverse = true;
 		$scope.orderByOptions = [
 			{
 				label:"Title",
-				value:"title"
+				value:"traktData.title"
 			},
 			{
 				label:"Collected Episode Count",
-				value:"completelyCollectedEpisodeCount"
+				value:"traktData.completelyCollectedEpisodeCount"
 			}
 		];
 

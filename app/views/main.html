@@ -43,35 +43,35 @@
 </div>
 
 <div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:filterText | orderBy:orderShows:orderReverse">
-	<h4><a target="_blank" href="{{ show.url }}">{{show.title}}</a></h4>
+	<h4><a target="_blank" href="{{ show.traktData.url }}">{{show.traktData.title}}</a></h4>
 	<div class="btn-group pull-right">
-		<button type="button" class="btn btn-mini" ng-click="show.isCollapsed = !show.isCollapsed">Toggle</button>
+		<button type="button" class="btn btn-mini" ng-click="show.collapsed = !show.collapsed">Toggle</button>
 		<button type="button" class="btn btn-mini" >Hide</button>
 	</div>
 
-	<div collapse="show.isCollapsed">
-		<span ng-show="show.completelyCollectedEpisodeCount">
+	<div collapse="show.collapsed">
+		<span ng-show="show.traktData.completelyCollectedEpisodeCount">
 			Continuously collected episode count:
 			<span class="badge badge-success">
-				{{ show.completelyCollectedEpisodeCount }}
+				{{ show.traktData.completelyCollectedEpisodeCount }}
 			</span>
 			in
-			<ng-pluralize count="show.completelyCollectedSeasons.length"
+			<ng-pluralize count="show.traktData.completelyCollectedSeasons.length"
 						  when="{'1': 'one season',
 								 'other': '{} seasons'}">
 			</ng-pluralize>
 		</span>
 		</br>
 		Seasons:
-		<div ng-repeat="season in show.seasons">
-			<a ng-href="{{linkToTraktSeasonPage(show.url, season.number)}}" target="_blank">#{{season.number}}</a>
+		<div ng-repeat="season in show.traktData.seasons">
+			<a ng-href="{{linkToTraktSeasonPage(show.traktData.url, season.number)}}" target="_blank">#{{season.number}}</a>
 			Episodes: {{ season.episodes.length }}
 
 			<div class="progress">
 				<div
 					ng-repeat="episode in season.episodes"
 					class="bar bar-{{episode}} episode"
-					ng-click="openEpisodeTraktPage(show.url, season.number, $index + 1)"
+					ng-click="openEpisodeTraktPage(show.traktData.url, season.number, $index + 1)"
 					style="width: {{100 / season.episodes.length}}%;"
 					title="Episode {{$index + 1}} of season {{season.number}}: {{episode}}">
 			</div>
