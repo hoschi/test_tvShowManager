@@ -3,10 +3,10 @@
 (function() {
 	var app = angular.module('tvShowManagerApp');
 	app.controller('MainCtrl', function ($scope, Restangular) {
-		var trakt, slug, loadData;
+		var rTrakt, slug, loadData, putShow;
 
-		// get shows
-		trakt = Restangular.all('trakt');
+		// define rest endpoints
+		rTrakt = Restangular.all('trakt');
 
 		// init
 		$scope.errors = [];
@@ -42,13 +42,31 @@
 			$scope.shows = [];
 
 			params = {force:force, forceSeasons:forceSeasons};
-			trakt.customGET('collection', params).then(function(shows){
+			rTrakt.customGET('collection', params).then(function(shows){
 				$scope.shows = shows;
 			},function(err){
 				$scope.shows = undefined;
 				$scope.errors.push("Can't fetch shows: " + err.data);
 				console.error(err);
 			});
+		};
+
+		putShow = function (show) {
+			var rest;
+			rest = Restangular.restangularizeElement(null, show, "show");
+			rest.put();
+		};
+
+		$scope.hideShow = function (show) {
+			console.log("hide show");
+			show.hidden = true;
+			putShow(show);
+		};
+
+		$scope.toggleShow = function (show) {
+			console.log("toggle show");
+			show.collapsed = !show.collapsed
+			putShow(show);
 		};
 
 		$scope.reloadData = function () {

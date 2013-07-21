@@ -45,8 +45,8 @@
 <div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:filterText | orderBy:orderShows:orderReverse">
 	<h4><a target="_blank" href="{{ show.traktData.url }}">{{show.traktData.title}}</a></h4>
 	<div class="btn-group pull-right">
-		<button type="button" class="btn btn-mini" ng-click="show.collapsed = !show.collapsed">Toggle</button>
-		<button type="button" class="btn btn-mini" >Hide</button>
+		<button type="button" class="btn btn-mini" ng-click="toggleShow(show)">Toggle</button>
+		<button type="button" class="btn btn-mini" ng-click="hideShow(show)">Hide</button>
 	</div>
 
 	<div collapse="show.collapsed">
