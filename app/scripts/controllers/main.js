@@ -30,7 +30,8 @@
 			watched:true,
 			notWatched:true,
 			completelyCollected:true,
-			collected:true,
+			collected:false,
+			continuous:true,
 			notCollected:false,
 			hideEmpty:false
 		};
