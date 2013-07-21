@@ -35,8 +35,14 @@
 			hideEmpty:false
 		};
 
-		loadData = function (force) {
-			trakt.customGET('collection', {force:force}).then(function(shows){
+		loadData = function (force, forceSeasons) {
+			var params;
+
+			// reset
+			$scope.shows = [];
+
+			params = {force:force, forceSeasons:forceSeasons};
+			trakt.customGET('collection', params).then(function(shows){
 				$scope.shows = shows;
 			},function(err){
 				$scope.shows = undefined;
@@ -47,6 +53,10 @@
 
 		$scope.reloadData = function () {
 			loadData(true);
+		};
+
+		$scope.reloadSeasonsData = function () {
+			loadData(false, true);
 		};
 
 		$scope.linkToTraktSeasonPage = function (baseUrl, season) {

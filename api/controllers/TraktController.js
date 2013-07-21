@@ -28,7 +28,7 @@ var TraktController = {
 				return res.send(err, 500);
 			}
 			res.json(shows);
-		}, req.param('force'));
+		}, req.param('force'), req.param('forceSeasons'));
 	},
 
 };

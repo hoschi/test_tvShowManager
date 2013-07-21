@@ -220,7 +220,7 @@ trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 				}
 
 				console.log("local show found for", traktShow.title);
-				if (!show.traktSeasons) {
+				if (!show.traktSeasons || forceSeasons) {
 					// fetch if show don't alredy contains season information or forced update
 					console.log("but seasons not found for", traktShow.title);
 					fetchSeasonsAndBuildCollection(show, traktShow);
