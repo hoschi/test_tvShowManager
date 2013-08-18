@@ -11,16 +11,37 @@
 		// init
 		$scope.errors = [];
 		$scope.shows = [];
-		$scope.orderShows = "traktData.completelyCollectedEpisodeCount";
+		$scope.orderShowsFirst = "traktData.continuouslyCollectedPercent";
+		$scope.orderShowsSecond = "traktData.completelyCollectedEpisodeCount";
 		$scope.orderReverse = true;
 		$scope.orderByOptions = [
+			{
+				label:"None",
+				value:null
+			},
 			{
 				label:"Title",
 				value:"traktData.title"
 			},
 			{
+				label:"Episode Count",
+				value:"traktData.episodeCount"
+			},
+			{
 				label:"Collected Episode Count",
 				value:"traktData.completelyCollectedEpisodeCount"
+			},
+			{
+				label:"Watched Percent",
+				value:"traktData.watchedPercent"
+			},
+			{
+				label:"Collected Percent",
+				value:"traktData.collectedPercent"
+			},
+			{
+				label:"Continuously Collected Percent",
+				value:"traktData.continuouslyCollectedPercent"
 			}
 		];
 

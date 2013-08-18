@@ -29,9 +29,13 @@
 			<input class="search-query span3" type="text" ng-model="filterText"/>
 		</div>
 		<div>
-			Order by:
-			<select ng-model="orderShows" ng-options="o.value as o.label for o in orderByOptions"></select>
+			First Order by:
+			<select ng-model="orderShowsFirst" ng-options="o.value as o.label for o in orderByOptions"></select>
 			<button type="button" class="btn" ng-model="orderReverse" btn-checkbox>Reverse</button>
+		</div>
+		<div>
+			Second Order by:
+			<select ng-model="orderShowsSecond" ng-options="o.value as o.label for o in orderByOptions"></select>
 		</div>
 	</div>
 </div>
@@ -48,7 +52,7 @@
 	</div>
 </div>
 
-<div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:{hidden:false} | filter:filterText | orderBy:orderShows:orderReverse">
+<div class="row well" ng-repeat="show in shows | filterShows:showFilterState | filter:{hidden:false} | filter:filterText | orderBy:[orderShowsFirst,orderShowsSecond]:orderReverse">
 	<h4><a target="_blank" href="{{ show.traktData.url }}">{{show.traktData.title}}</a></h4>
 	<div class="btn-group pull-right">
 		<button type="button" class="btn btn-mini" ng-click="toggleShow(show)">Toggle</button>

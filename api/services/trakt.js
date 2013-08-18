@@ -142,24 +142,31 @@ trakt.getSeasons = function (callback, force, showId) {
 };
 
 trakt.markEpisodes = function (show, collection, state) {
-	var collectionItem;
+	var collectionItem, sum;
 
 	collectionItem = _.find(collection, function(showInCollection) {
 		return show.tvdb_id === showInCollection.tvdb_id;
 	})
 
+	sum = 0;
 	if (collectionItem) {
 		show[state] = true;
 		// mark collected episodes
 		collectionItem.seasons.forEach(function(collectedSeason) {
+			if (collectedSeason.season === 0) {
+				// ignore special season
+				return;
+			}
 			collectedSeason.episodes.forEach(function(episode) {
 				show.seasons[collectedSeason.season - 1].episodes[episode - 1] = state;
+				sum++;
 			});
 		});
 
 	} else {
 		show[state] = false;
 	}
+	show[state + "Count"] = sum;
 };
 
 trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
@@ -248,13 +255,14 @@ trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 };
 
 trakt.buildCollection = function (state, show, traktShow, shows, traktShows, collection, watched, callback) {
-	var collectionItem, seasons, nextSeason, nextSeasonToCheckIndex;
+	var collectionItem, seasons, nextSeason, nextSeasonToCheckIndex, sum;
 
 	seasons = show.traktSeasons;
 
 	traktShow.seasons = [];
 
 	// create seasons with empty episode lists
+	sum = 0;
 	seasons.forEach(function(season) {
 		var newSeason, i;
 
@@ -267,7 +275,11 @@ trakt.buildCollection = function (state, show, traktShow, shows, traktShows, col
 			newSeason.episodes[i] = "none";
 		}
 		traktShow.seasons[season.season - 1] = newSeason;
+		if (season.season !== 0) {
+			sum += season.episodes;
+		}
 	});
+	traktShow.episodeCount = sum;
 
 	// check if show is in collection
 	this.markEpisodes(traktShow, collection, 'collected');
@@ -333,6 +345,11 @@ trakt.buildCollection = function (state, show, traktShow, shows, traktShows, col
 	traktShow.completelyCollectedEpisodeCount = _.foldl(traktShow.completelyCollectedSeasons, function (sum, season) {
 		return sum += season.episodes.length;
 	}, 0);
+
+	// save 'copmleted' ratio
+	traktShow.watchedPercent = Math.round((100 / traktShow.episodeCount) * traktShow.watchedCount);
+	traktShow.collectedPercent = Math.round((100 / traktShow.episodeCount) * traktShow.collectedCount);
+	traktShow.continuouslyCollectedPercent = Math.round((100 / (traktShow.episodeCount - traktShow.watchedCount)) * traktShow.completelyCollectedEpisodeCount);
 
 	// save completely watched and collected
 	traktShow.completelyWatched = _.every(traktShow.seasons, function (season) {
