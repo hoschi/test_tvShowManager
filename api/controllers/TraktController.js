@@ -22,13 +22,31 @@ var TraktController = {
 
 	// To trigger this action locally, visit: `http://localhost:port/trakt/collection`
 	collection: function (req, res) {
-		trakt.getAllShowsExtended(function (err, shows) {
+		var force, forceSeasons;
+
+		force = req.param('force');
+		forceSeasons = req.param('forceSeasons');
+
+		if (force || forceSeasons) {
+			console.log('forced, fetching data from trakt');
+			trakt.getAllShowsExtended(function (err, shows) {
+				if (err) {
+					throw new Error(err);
+					return res.send(err, 500);
+				}
+				res.json(shows);
+			}, force, forceSeasons);
+			return;
+		}
+
+		console.log('not forcde, get data from DB');
+		Show.findAll().done(function(err, shows){
 			if (err) {
-				throw new Error(err);
-				return res.send(err, 500);
+				console.error("error");
+				res.send(500);
 			}
 			res.json(shows);
-		}, req.param('force'), req.param('forceSeasons'));
+		});
 	},
 
 };
