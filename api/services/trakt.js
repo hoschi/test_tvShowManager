@@ -363,13 +363,19 @@ trakt.buildCollection = function (state, show, traktShow, shows, traktShows, col
 	});
 
 	show.traktData = traktShow;
-	shows.push(show);
 
-	// finished?
-	state.processedShows++;
-	if (state.processedShows === traktShows.length) {
-		callback(null, shows);
-	}
+	Show.update(show.id, {traktData:traktShow}, _.bind(function(err) {
+		if (err) return callback(err);
+
+		console.log("data saved ", traktShow.title);
+		shows.push(show);
+
+		// finished?
+		state.processedShows++;
+		if (state.processedShows === traktShows.length) {
+			callback(null, shows);
+		}
+	}, this));
 };
 
 module.exports = trakt;
