@@ -59,7 +59,7 @@
 		<button type="button" class="btn btn-mini" ng-click="hideShow(show)">Hide</button>
 	</div>
 
-	<div collapse="show.collapsed">
+	<div ng-show="!show.collapsed">
 		<span ng-show="show.traktData.completelyCollectedEpisodeCount">
 			Continuously collected episode count:
 			<span class="badge badge-success">
