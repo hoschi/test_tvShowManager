@@ -4,15 +4,17 @@
 		<li ng-repeat="error in errors">{{error}}</li>
 	</ul>
 </div>
+
 <div class="row">
-	<div class="span5">
+	<div class="offset3 span6">
+		<h4>Filter By State:</h4>
 		Watched:
 		<div class="btn-group">
 			<button type="button" class="btn" ng-model="showFilterState.completelyWatched" btn-checkbox>Complete</button>
 			<button type="button" class="btn" ng-model="showFilterState.watched" btn-checkbox>Started</button>
 			<button type="button" class="btn" ng-model="showFilterState.notWatched" btn-checkbox>None</button>
 		</div>
-		<br/>
+		<br>
 		Collected:
 		<div class="btn-group">
 			<button type="button" class="btn" ng-model="showFilterState.completelyCollected" btn-checkbox>Complete</button>
@@ -20,34 +22,29 @@
 			<button type="button" class="btn" ng-model="showFilterState.collected" btn-checkbox>Started</button>
 			<button type="button" class="btn" ng-model="showFilterState.notCollected" btn-checkbox>None</button>
 		</div>
-		<br/>
+		<br>
 		<button type="button" class="btn" ng-model="showFilterState.hideEmpty" btn-checkbox>Hide Empty</button>
-	</div>
-	<div class="span7">
-		<div>
-			Filter:
-			<input class="search-query span3" type="text" ng-model="filterText"/>
-		</div>
-		<div>
-			First Order by:
-			<select ng-model="orderShowsFirst" ng-options="o.value as o.label for o in orderByOptions"></select>
-			<button type="button" class="btn" ng-model="orderReverse" btn-checkbox>Reverse</button>
-		</div>
-		<div>
-			Second Order by:
-			<select ng-model="orderShowsSecond" ng-options="o.value as o.label for o in orderByOptions"></select>
-		</div>
-	</div>
-</div>
 
-<div class="row">
-	<div class="span12">
+		<h4>Filter By Text:</h4>
+		Filter:
+		<input class="search-query span3" type="text" ng-model="filterText"/>
+
+		<h4>Order By:</h4>
+		First Level:
+		<select ng-model="orderShowsFirst" ng-options="o.value as o.label for o in orderByOptions"></select>
+		<button type="button" class="btn" ng-model="orderReverse" btn-checkbox>Reverse</button>
+		<br>
+		Second Level:
+		<select ng-model="orderShowsSecond" ng-options="o.value as o.label for o in orderByOptions"></select>
+
+		<h4>Get Data From Trakt:</h4>
 		<button type="button" class="btn" ng-click="reloadData()">Reload Watched/Collected Data</button>
 		<button type="button" class="btn" ng-click="reloadSeasonsData()">Reload Seasons Data</button>
 	</div>
 </div>
+
 <div class="row shows-info">
-	<div class="offset5 span12">
+	<div class="offset4 span4">
 		You have <span class="badge">{{shows.length}}</span> shows :)
 	</div>
 </div>
