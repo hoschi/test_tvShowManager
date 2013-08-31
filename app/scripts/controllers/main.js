@@ -65,7 +65,6 @@
 
 			// start animation
 			progressbar.start();
-			progressbar.set(10);
 
 			params = {force:force, forceSeasons:forceSeasons};
 			rTrakt.customGET('collection', params).then(function(shows){
