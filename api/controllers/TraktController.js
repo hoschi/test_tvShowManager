@@ -39,7 +39,7 @@ var TraktController = {
 			return;
 		}
 
-		console.log('not forcde, get data from DB');
+		console.log('not forced, get data from DB');
 		Show.findAll().done(function(err, shows){
 			if (err) {
 				console.error("error");
