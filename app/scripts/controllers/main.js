@@ -3,7 +3,7 @@
 (function() {
 	var app = angular.module('tvShowManagerApp');
 	app.controller('MainCtrl', function ($scope, $timeout, Restangular, progressbar) {
-		var rTrakt, slug, loadData, putShow;
+		var rTrakt, loadData, putShow;
 
 		// define rest endpoints
 		rTrakt = Restangular.all('trakt');
@@ -58,7 +58,7 @@
 		};
 
 		loadData = function (force, forceSeasons) {
-			var params, process, intervalId;
+			var params;
 
 			// reset
 			$scope.shows = [];
@@ -69,6 +69,10 @@
 			params = {force:force, forceSeasons:forceSeasons};
 			rTrakt.customGET('collection', params).then(function(shows){
 				$scope.shows = shows;
+
+				if (shows.length <= 0) {
+					progressbar.complete();
+				}
 			},function(err){
 				$scope.shows = undefined;
 				$scope.errors.push("Can't fetch shows: " + err.data);
@@ -77,7 +81,7 @@
 			});
 		};
 
-		$scope.$on('finishedShowRepeat', function(ngRepeatFinishedEvent) {
+		$scope.$on('finishedShowRepeat', function() {
 			progressbar.complete();
 		});
 
@@ -95,7 +99,7 @@
 
 		$scope.toggleShow = function (show) {
 			console.log("toggle show");
-			show.collapsed = !show.collapsed
+			show.collapsed = !show.collapsed;
 			putShow(show);
 		};
 

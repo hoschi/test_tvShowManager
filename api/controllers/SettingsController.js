@@ -8,12 +8,15 @@ getFirst = function (req, res) {
 	Settings.getFirst(function(err, settings){
 		if (err) {
 			res.send(500, err);
+			return;
 		}
 
 		if (!settings) {
-			res.send(404, "Settings object should be there but isn't, this should be created during bootstrap!");
+			res.send(404);
+			return;
 		}
 
+		console.log(settings);
 		res.json(settings.values);
 	});
 };

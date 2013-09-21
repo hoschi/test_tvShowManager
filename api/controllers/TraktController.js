@@ -45,6 +45,7 @@ var TraktController = {
 				console.error("error");
 				res.send(500);
 			}
+			console.log("found data, return");
 			res.json(shows);
 		});
 	},

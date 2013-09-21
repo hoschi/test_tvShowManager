@@ -3,16 +3,18 @@
     "maxerr":100,
 
     "browser":true,
+    "node":true,
     "predef":[
-		angular:true,
+        "define",
+        "require",
+        "angular",
+		"Show"
     ],
 
-	"node":true,
-
     "debug":false,
-    "devel":false,
+    "devel":true,
 
-    "es5":false,/*is needed for trailing comma detection, disable it if it produces too much noise on other 'errors'*/
+    "es5":true,
     "strict":false,
     "globalstrict":false,
 
@@ -28,7 +30,7 @@
     "expr":false,
     "forin":false,
     "immed":true,
-    "latedef":false,
+    "latedef":true,
     "loopfunc":true,
     "noarg":false,
     "regexp":false,

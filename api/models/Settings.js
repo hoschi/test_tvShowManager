@@ -6,7 +6,6 @@ module.exports = {
 
 	attributes: {
 
-		// Simple attribute:
 		traktUsername: 'STRING',
 		traktPassword: 'STRING',
 		traktApiKey: 'STRING'
@@ -20,14 +19,23 @@ module.exports = {
 	},
 
 	getFirst: function (callback) {
-		Settings.find(1).done(function(err, settings){
+		Settings.find().done(function(err, settings){
 			if (err) return callback(err);
 
 			if (!settings) {
-				callback();
+				Settings.create({
+					traktUsername:"",
+					traktPassword:"",
+					traktApiKey:""
+				}, function (err, newSettings) {
+					if (err) return callback(err);
+
+					console.log("Settings created: ", newSettings);
+					return callback(null, newSettings);
+				});
 			}
 
-			//console.log(settings);
+			//console.log("settings found: ", settings);
 			callback(null, settings);
 		});
 	}

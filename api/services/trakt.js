@@ -1,7 +1,8 @@
-var trakt, request, _;
+var trakt, request, _, async;
 
 request = require('request');
 _ = require('lodash');
+async = require('async');
 
 trakt = {
 	settings:{
@@ -31,7 +32,9 @@ trakt.createTransformer = function (callback, key) {
 
 trakt.transformResponse = function (callback, key, err, resp, body) {
 	var json;
-	if (err) return callback(err);
+	if (err) {
+		return callback(err);
+	}
 
 	json = JSON.parse(body);
 	if (json.error) {
@@ -44,10 +47,10 @@ trakt.transformResponse = function (callback, key, err, resp, body) {
 	console.log("fetched data for key " + key);
 
 	return callback(null, json);
-}
+};
 
 trakt.getAllShows = function (force, callback) {
-	var url, cache, key;
+	var url, key, data;
 
 	key = "getAllShows";
 	data = this.getCached(key, force);
@@ -69,7 +72,9 @@ trakt.getAllShows = function (force, callback) {
 	// this is only for development purposes
 /*
  *    }, this.createTransformer(_.bind(function (err, data) {
- *        if (err) return callback(err);
+ *        if (err) {
+ *        return callback(err);
+ *      }
  *
  *        newData = data.filter(function (show) {
  *            return show.title === "7 Days" ||
@@ -84,7 +89,7 @@ trakt.getAllShows = function (force, callback) {
 };
 
 trakt.getCollection = function (force, callback) {
-	var url, cache, key;
+	var url, key, data;
 
 	key = "getCollection";
 	data = this.getCached(key, force);
@@ -105,7 +110,7 @@ trakt.getCollection = function (force, callback) {
 };
 
 trakt.getWatchedShows = function (force, callback) {
-	var url, cache, key;
+	var url, data, key;
 
 	key = "getWatchedShows";
 	data = this.getCached(key, force);
@@ -126,7 +131,7 @@ trakt.getWatchedShows = function (force, callback) {
 };
 
 trakt.getSeasons = function (callback, force, showId) {
-	var url, cache, key;
+	var url, data, key;
 
 	key = "getSeasons-" + showId;
 	data = this.getCached(key, force);
@@ -146,7 +151,7 @@ trakt.markEpisodes = function (show, collection, state) {
 
 	collectionItem = _.find(collection, function(showInCollection) {
 		return show.tvdb_id === showInCollection.tvdb_id;
-	})
+	});
 
 	sum = 0;
 	if (collectionItem) {
@@ -158,7 +163,15 @@ trakt.markEpisodes = function (show, collection, state) {
 				return;
 			}
 			collectedSeason.episodes.forEach(function(episode) {
-				show.seasons[collectedSeason.season - 1].episodes[episode - 1] = state;
+				var seasonToMark;
+
+				seasonToMark = show.seasons[collectedSeason.season - 1];
+				if (!seasonToMark) {
+					console.log("uh oh, no season found!", collectedSeason.season - 1);
+					return;
+				}
+
+				seasonToMark.episodes[episode - 1] = state;
 				sum++;
 			});
 		});
@@ -169,6 +182,81 @@ trakt.markEpisodes = function (show, collection, state) {
 	show[state + "Count"] = sum;
 };
 
+trakt.fetchSeasonsAndBuildCollection = function (force, state, show, traktShow, shows, traktShows, collection, watched, callback) {
+	this.getSeasons(_.bind(function (err, seasons) {
+		if (err) {
+			return callback(err);
+		}
+
+		console.log("got seasons, save data", traktShow.title, show.id);
+		show.traktSeasons = seasons;
+
+		Show.update({_id:show.id}, {$set: {traktSeasons:seasons}}, _.bind(function(err) {
+			if (err) {
+				return callback(err);
+			}
+
+			console.log("data saved, build collection for", traktShow.title);
+			this.buildCollection(state, show, traktShow, shows, traktShows, collection, watched, callback);
+		}, this));
+	}, this), force, traktShow.tvdb_id);
+};
+
+trakt.updateOrCreateShow = function(force, forceSeasons, state, traktShow, shows, traktShows, collection, watched, callback) {
+	console.log("search show in db for tvdb id", traktShow.title);
+	Show.find({tvdbId:traktShow.tvdb_id}, _.bind(function(err, show) {
+		if (err) {
+			console.log("Error occured while searching for show '" + traktShow.title + "'");
+			return callback(err);
+		}
+
+		if (!show) {
+			console.log("not found, create one for", traktShow.title);
+			Show.create({
+				collapsed:false,
+				hidden:false,
+				tvdbId:traktShow.tvdb_id
+			}, _.bind(function(err, show) {
+				if (err) {
+					return callback(err);
+				}
+
+				console.log("created, fetch seasons for", traktShow.title);
+				this.fetchSeasonsAndBuildCollection(force, state, show, traktShow, shows, traktShows, collection, watched, callback);
+				return;
+			}, this));
+			return;
+		}
+
+		console.log("local show found for", traktShow.title);
+
+		if (show.hidden) {
+			console.log("show is hidden, return", traktShow.title);
+			state.processedShows++;
+			if (state.processedShows === traktShows.length) {
+				callback(null, shows);
+			}
+			return;
+		}
+
+		if (!show.traktSeasons || forceSeasons) {
+			// fetch if show don't alredy contains season information or forced update
+			console.log("but seasons not found for", traktShow.title);
+			this.fetchSeasonsAndBuildCollection(force, state, show, traktShow, shows, traktShows, collection, watched, callback);
+			return;
+		}
+
+		console.log("local show has already season data for", traktShow.title);
+		this.buildCollection(state, show, traktShow, shows, traktShows, collection, watched, callback);
+	}, this));
+};
+
+trakt.getUpdateOrCreateShowClosure = function (force, forceSeasons, state, traktShow, shows, traktShows, collection, watched, callback) {
+	return _.bind(function () {
+		this.updateOrCreateShow(force, forceSeasons, state, traktShow, shows, traktShows, collection, watched, callback);
+	}, this);
+};
+
 trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 	console.log("loading extended tv show data, forced?", force);
 
@@ -177,9 +265,11 @@ trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 		_.bind(this.getCollection, this, force),
 		_.bind(this.getWatchedShows, this, force)
 	], _.bind(function (err, results) {
-		var state, shows, traktShows, collection, watched;
+		var state, shows, traktShows, collection, watched, i;
 
-		if (err) return callback(err);
+		if (err) {
+			return callback(err);
+		}
 
 		state = {
 			processedShows:0
@@ -188,74 +278,17 @@ trakt.getAllShowsExtended = function (callback, force, forceSeasons) {
 		traktShows = results[0];
 		collection = results[1];
 		watched = results[2];
-		traktShows.forEach(function(traktShow) {
-			var fetchSeasonsAndBuildCollection;
 
-			fetchSeasonsAndBuildCollection = _.bind(function (show, traktShow) {
-				this.getSeasons(_.bind(function (err, seasons) {
-					if (err) return callback(err);
-
-					console.log("got seasons, save data", traktShow.title);
-					show.traktSeasons = seasons;
-
-					Show.update(show.id, {traktSeasons:seasons}, _.bind(function(err) {
-						if (err) return callback(err);
-
-						console.log("data saved, build collection for", traktShow.title);
-						this.buildCollection(state, show, traktShow, shows, traktShows, collection, watched, callback);
-					}, this));
-				}, this), force, traktShow.tvdb_id);
-			}, this);
-
-			console.log("search show in db for tvdb id", traktShow.title);
-			Show.findByTvdbId(traktShow.tvdb_id, _.bind(function(err, show) {
-				if (err) return callback(err);
-
-				if (!show) {
-					console.log("not found, create one for", traktShow.title);
-					Show.create({
-						collapsed:false,
-						hidden:false,
-						tvdbId:traktShow.tvdb_id
-					}, function(err, show) {
-						if (err) return callback(err);
-
-						console.log("created, fetch seasons for", traktShow.title);
-						fetchSeasonsAndBuildCollection(show, traktShow);
-						return;
-					});
-					return;
-				}
-
-				console.log("local show found for", traktShow.title);
-
-				if (show.hidden) {
-					console.log("show is hidden, return", traktShow.title);
-					state.processedShows++;
-					if (state.processedShows === traktShows.length) {
-						callback(null, shows);
-					}
-					return;
-				}
-
-				if (!show.traktSeasons || forceSeasons) {
-					// fetch if show don't alredy contains season information or forced update
-					console.log("but seasons not found for", traktShow.title);
-					fetchSeasonsAndBuildCollection(show, traktShow);
-					return;
-				}
-
-				console.log("local show has already season data for", traktShow.title);
-				this.buildCollection(state, show, traktShow, shows, traktShows, collection, watched, callback);
-			}, this));
-
-
-		}, this);
+		for (i = 0; i < traktShows.length; i++) {
+			// delay because 200 concurrent find requests to mongo break the app (sails.js adapter!!!?)
+			_.delay(this.getUpdateOrCreateShowClosure(force, forceSeasons, state, traktShows[i], shows, traktShows, collection, watched, callback),
+				i * 10);
+		}
 	}, this));
 };
 
 trakt.buildCollection = function (state, show, traktShow, shows, traktShows, collection, watched, callback) {
-	var collectionItem, seasons, nextSeason, nextSeasonToCheckIndex, sum;
+	var seasons, nextSeason, nextSeasonToCheckIndex, sum;
 
 	seasons = show.traktSeasons;
 
@@ -290,8 +323,6 @@ trakt.buildCollection = function (state, show, traktShow, shows, traktShows, col
 	// search for completely collected seasons, and add flags
 	traktShow.completelyCollectedSeasons = _(traktShow.seasons)
 		.first(function (season) {
-			var complete;
-
 			season.completelyCollected = true;
 			season.completelyWatched = true;
 			season.empty = true;
@@ -364,8 +395,10 @@ trakt.buildCollection = function (state, show, traktShow, shows, traktShows, col
 
 	show.traktData = traktShow;
 
-	Show.update(show.id, {traktData:traktShow}, _.bind(function(err) {
-		if (err) return callback(err);
+	Show.update({_id:show.id}, {$set: {traktData:traktShow}}, _.bind(function(err) {
+		if (err) {
+			return callback(err);
+		}
 
 		console.log("data saved ", traktShow.title);
 		shows.push(show);
