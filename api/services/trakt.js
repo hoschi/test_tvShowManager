@@ -191,7 +191,7 @@ trakt.fetchSeasonsAndBuildCollection = function (force, state, show, traktShow, 
 		console.log("got seasons, save data", traktShow.title, show.id);
 		show.traktSeasons = seasons;
 
-		Show.update({_id:show.id}, {$set: {traktSeasons:seasons}}, _.bind(function(err) {
+		Show.update({id:show.id}, {traktSeasons:seasons}, _.bind(function(err) {
 			if (err) {
 				return callback(err);
 			}
@@ -395,7 +395,7 @@ trakt.buildCollection = function (state, show, traktShow, shows, traktShows, col
 
 	show.traktData = traktShow;
 
-	Show.update({_id:show.id}, {$set: {traktData:traktShow}}, _.bind(function(err) {
+	Show.update({id:show.id}, {traktData:traktShow}, _.bind(function(err) {
 		if (err) {
 			return callback(err);
 		}
