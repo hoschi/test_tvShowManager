@@ -46,6 +46,17 @@ trakt.transformResponse = function (callback, key, err, resp, body) {
 
 	console.log("fetched data for key " + key);
 
+	// convert tvdb id, because after save with string its converted to Integer ...........
+	if (_.isArray(json)) {
+		json.forEach(function(item) {
+			item.tvdb_id = parseInt(item.tvdb_id, 10);
+		});
+	}
+
+	if (json.tvdb_id) {
+		json.tvdb_id = parseInt(json.tvdb_id, 10);
+	}
+
 	return callback(null, json);
 };
 
