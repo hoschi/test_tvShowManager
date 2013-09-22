@@ -1,5 +1,5 @@
 This is my testbed/playground project for angularjs and sails.js. It isn't secured in any way.
-DONT USE TRY THIS AT HOME.
+DONT TRY THIS AT HOME.
 
 # Screenshots
 
