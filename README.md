@@ -13,6 +13,7 @@ DONT USE TRY THIS AT HOME.
 # Install
 
 *   `npm install`
+*   `bower install`
 *   clone [mongo adapter](https://github.com/hoschi/sails-mongo) into a directory
     *   change into this directory
     *   `git checkout 0.8.4`
@@ -20,4 +21,17 @@ DONT USE TRY THIS AT HOME.
 *   change back to project directory
 *   `npm link sails-mongo-hoschi`
 
-Now you can start the app with `sails lift`.
+## dev
+
+*   `grunt watch`
+*   `grunt nodemon:dev`
+
+## production
+
+*   add `config/local.js` like this
+
+    module.exports.port = 3003;
+    module.exports.environment = 'production';
+
+*   compile scss files with `grunt compass`
+*   run app with `forever start app.js`
