@@ -5,22 +5,25 @@
 </div>
 
 <div class="row">
-	<div class="offset3 span6">
+	<div class="offset3 span6 controls-container">
 		<a href="#/admin">Admin Area</a>
 		<h4>Filter By State:</h4>
-		Watched:
-		<div class="btn-group">
-			<button type="button" class="btn" ng-model="showFilterState.completelyWatched" btn-checkbox>Complete</button>
-			<button type="button" class="btn" ng-model="showFilterState.watched" btn-checkbox>Started</button>
-			<button type="button" class="btn" ng-model="showFilterState.notWatched" btn-checkbox>None</button>
+		<div class="row">
+				<span class="span1">		Watched:</span>
+				<div class="btn-group">
+					<button type="button" class="btn" ng-model="showFilterState.completelyWatched" btn-checkbox>Complete</button>
+					<button type="button" class="btn" ng-model="showFilterState.watched" btn-checkbox>Started</button>
+					<button type="button" class="btn" ng-model="showFilterState.notWatched" btn-checkbox>None</button>
+				</div>
 		</div>
-		<br>
-		Collected:
-		<div class="btn-group">
-			<button type="button" class="btn" ng-model="showFilterState.completelyCollected" btn-checkbox>Complete</button>
-			<button type="button" class="btn" ng-model="showFilterState.continuous" btn-checkbox>Continous</button>
-			<button type="button" class="btn" ng-model="showFilterState.collected" btn-checkbox>Started</button>
-			<button type="button" class="btn" ng-model="showFilterState.notCollected" btn-checkbox>None</button>
+		<div class="row">
+				<span class="span1">				Collected:</span>
+				<div class="btn-group">
+					<button type="button" class="btn" ng-model="showFilterState.completelyCollected" btn-checkbox>Complete</button>
+					<button type="button" class="btn" ng-model="showFilterState.collected" btn-checkbox>Started</button>
+					<button type="button" class="btn" ng-model="showFilterState.notCollected" btn-checkbox>None</button>
+					<button type="button" class="btn" ng-model="showFilterState.continuous" btn-checkbox>Continous</button>
+				</div>
 		</div>
 		<br>
 		<button type="button" class="btn" ng-model="showFilterState.hideEmpty" btn-checkbox>Hide Empty</button>
@@ -30,12 +33,15 @@
 		<input class="search-query span3" type="text" ng-model="filterText"/>
 
 		<h4>Order By:</h4>
-		First Level:
-		<select ng-model="orderShowsFirst" ng-options="o.value as o.label for o in orderByOptions"></select>
-		<button type="button" class="btn" ng-model="orderReverse" btn-checkbox>Reverse</button>
-		<br>
-		Second Level:
-		<select ng-model="orderShowsSecond" ng-options="o.value as o.label for o in orderByOptions"></select>
+		<div class="row">
+				<span class="order-by-label span">				First Level:</span>
+				<select ng-model="orderShowsFirst" ng-options="o.value as o.label for o in orderByOptions"></select>
+				<button type="button" class="btn" ng-model="orderReverse" btn-checkbox>Reverse</button>
+		</div>
+		<div class="row">
+				<span class="order-by-label span">				Second Level:</span>
+				<select ng-model="orderShowsSecond" ng-options="o.value as o.label for o in orderByOptions"></select>
+		</div>
 
 		<h4>Get Data From Trakt:</h4>
 		<button type="button" class="btn" ng-click="reloadSeasonsData()">Reload Seasons Data</button>

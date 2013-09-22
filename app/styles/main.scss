@@ -55,6 +55,25 @@ body {
 	margin: 0px 20px;
 }
 
+.order-by-label {
+	display: inline-block;
+	width: 95px;
+}
+
+.controls-container {
+	select {
+		margin-bottom: 0px;
+	}
+
+	.row {
+		margin-bottom: 5px;
+	}
+
+	span {
+		line-height: 2;
+	}
+}
+
 /* Large desktop */
 @media (min-width: 1200px) {
 }
