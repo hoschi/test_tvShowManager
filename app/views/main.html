@@ -38,8 +38,9 @@
 		<select ng-model="orderShowsSecond" ng-options="o.value as o.label for o in orderByOptions"></select>
 
 		<h4>Get Data From Trakt:</h4>
-		<button type="button" class="btn" ng-click="reloadData()">Reload Watched/Collected Data</button>
 		<button type="button" class="btn" ng-click="reloadSeasonsData()">Reload Seasons Data</button>
+		or only
+		<button type="button" class="btn" ng-click="reloadData()">Reload Watched/Collected Data</button>
 	</div>
 </div>
 
