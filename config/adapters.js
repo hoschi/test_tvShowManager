@@ -9,6 +9,6 @@ module.exports.adapters = {
 
 	mongo: {
 		module : 'sails-mongo-hoschi',
-		url	: 'mongodb://localhost/tvshm'
+		url	: 'mongodb://localhost/tvshm-stable'
 	}
 };
