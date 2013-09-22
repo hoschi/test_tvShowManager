@@ -28,6 +28,7 @@ DONT USE TRY THIS AT HOME.
 
 ## production
 
+*   checkout stable branch `git checkout stable`
 *   add `config/local.js` like this
 
     module.exports.port = 3003;
