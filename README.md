@@ -36,3 +36,7 @@ DONT TRY THIS AT HOME.
 
 *   compile scss files with `grunt compass`
 *   run app with `forever start app.js`
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/hoschi/test_tvshowmanager/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
