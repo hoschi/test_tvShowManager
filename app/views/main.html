@@ -55,15 +55,15 @@
 	</div>
 </div>
 
-<div class="row well show" ng-repeat="show in shows | filterShows:showFilterState | filter:{hidden:false} | filter:filterText | orderBy:[orderShowsFirst,orderShowsSecond]:orderReverse" on-finish-render='finishedShowRepeat' on-render="renderShows">
-	<h4><a target="_blank" href="{{ show.traktData.url }}">{{show.traktData.title}}</a></h4>
+<div class="row well show" bindonce ng-repeat="show in shows | filterShows:showFilterState | filter:{hidden:false} | filter:filterText | orderBy:[orderShowsFirst,orderShowsSecond]:orderReverse" on-finish-render='finishedShowRepeat' on-render="renderShows">
+	<h4><a target="_blank" bo-href="{{ show.traktData.url }}">{{show.traktData.title}}</a></h4>
 	<div class="btn-group pull-right">
 		<button type="button" class="btn btn-mini" ng-click="toggleShow(show)">Toggle</button>
 		<button type="button" class="btn btn-mini" ng-click="hideShow(show)">Hide</button>
 	</div>
 
-	<div ng-show="!show.collapsed">
-		<span ng-show="show.traktData.completelyCollectedEpisodeCount">
+	<div bo-show="!show.collapsed">
+		<span bo-show="show.traktData.completelyCollectedEpisodeCount">
 			Continuously collected episode count:
 			<span class="badge badge-success">
 				{{ show.traktData.completelyCollectedEpisodeCount }}
@@ -76,13 +76,13 @@
 		</span>
 		</br>
 		Seasons:
-		<div ng-repeat="season in show.traktData.seasons">
-			<a ng-href="{{linkToTraktSeasonPage(show.traktData.url, season.number)}}" target="_blank">#{{season.number}}</a>
+		<div bindonce ng-repeat="season in show.traktData.seasons">
+			<a bo-href="{{linkToTraktSeasonPage(show.traktData.url, season.number)}}" target="_blank">#{{season.number}}</a>
 			Episodes: {{ season.episodes.length }}
 
 			<div class="progress">
 				<div
-					ng-repeat="episode in season.episodes"
+					bindonce ng-repeat="episode in season.episodes"
 					class="bar bar-{{episode}} episode"
 					ng-click="openEpisodeTraktPage(show.traktData.url, season.number, $index + 1)"
 					style="width: {{100 / season.episodes.length}}%;"
