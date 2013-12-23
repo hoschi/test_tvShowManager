@@ -116,8 +116,12 @@
 				"/season/" + season;
 		};
 
+		$scope.openPage = function (url) {
+			open(url);
+		};
+
 		$scope.openEpisodeTraktPage = function (baseUrl, season, episode) {
-			open(baseUrl +
+			$scope.openPage(baseUrl +
 				"/season/" + season +
 				"/episode/" + episode, "_blank");
 		};
